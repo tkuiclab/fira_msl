@@ -1,0 +1,7 @@
+# Temp. files
+*~
+*.swp
+*.swo
+*.py[cod]
+*.user.*
+
