@@ -5,3 +5,6 @@
 *.py[cod]
 *.user.*
 
+# No toplevel cmake
+/CMakeLists.txt
+
