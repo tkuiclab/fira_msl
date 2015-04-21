@@ -110,9 +110,6 @@ add_executable(rcs_wrapper_node src/rcs_wrapper_node.cpp)
 add_dependencies(rcs_wrapper_node rcs_wrapper_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(sample_player
-  ${catkin_LIBRARIES}
-)
 target_link_libraries(rcs_wrapper_node
   rcsc_agent
   rcsc_ann
