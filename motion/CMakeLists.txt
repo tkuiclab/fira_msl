@@ -5,6 +5,7 @@ project(motion)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  roscpp
   geometry_msgs
   std_msgs
 )
@@ -93,25 +94,28 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-# add_library(motion
-#   src/${PROJECT_NAME}/motion.cpp
-# )
+add_library(LinuxNetwork
+  src/${PROJECT_NAME}/LinuxNetwork.cpp
+)
 
 ## Declare a cpp executable
-# add_executable(motion_node src/motion_node.cpp)
+add_executable(motion_node src/motion_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(motion_node motion_generate_messages_cpp)
+add_dependencies(motion_node motion_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(motion_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(motion_node
+  tinyxml2
+  LinuxNetwork
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
