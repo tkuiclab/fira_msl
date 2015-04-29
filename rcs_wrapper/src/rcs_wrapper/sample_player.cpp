@@ -1,29 +1,3 @@
-// -*-c++-*-
-
-/*
- *Copyright:
-
- Copyright (C) Hidehisa AKIYAMA
-
- This code is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 3, or (at your option)
- any later version.
-
- This code is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this code; see the file COPYING.  If not, write to
- the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-
- *EndCopyright:
- */
-
-/////////////////////////////////////////////////////////////////////
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -101,61 +75,13 @@ SamplePlayer::SamplePlayer(ros::NodeHandle *nh)
 {
     raw_srv_msg_pub = nh->advertise<std_msgs::String>("/rcs/raw_recvice_msg", 1000);
     self_pose_pub = nh->advertise<geometry_msgs::Pose2D>("/rcs/self_pose", 1000);
+    ball_pos_pub = nh->advertise<geometry_msgs::Pose2D>("/rcs/ball_pos", 1000);
 
     cmd_vel_sub = nh->subscribe<geometry_msgs::Twist>("/rcs/cmd_vel", 10, &SamplePlayer::velCallback, this);
 
-    //boost::shared_ptr< AudioMemory > audio_memory( new AudioMemory );
-
-    //M_worldmodel.setAudioMemory( audio_memory );
-
-    //
-    // set communication message parser
-    //
-    //addSayMessageParser( SayMessageParser::Ptr( new BallMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new PassMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new InterceptMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new GoalieMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new GoalieAndPlayerMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new OffsideLineMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new DefenseLineMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new WaitRequestMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new PassRequestMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new DribbleMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new BallGoalieMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new OnePlayerMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new TwoPlayerMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new ThreePlayerMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new SelfMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new TeammateMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new OpponentMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new BallPlayerMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new StaminaMessageParser( audio_memory ) ) );
-    //addSayMessageParser( SayMessageParser::Ptr( new RecoveryMessageParser( audio_memory ) ) );
-
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 9 >( audio_memory ) ) );
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 8 >( audio_memory ) ) );
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 7 >( audio_memory ) ) );
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 6 >( audio_memory ) ) );
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 5 >( audio_memory ) ) );
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 4 >( audio_memory ) ) );
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 3 >( audio_memory ) ) );
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 2 >( audio_memory ) ) );
-    // addSayMessageParser( SayMessageParser::Ptr( new FreeMessageParser< 1 >( audio_memory ) ) );
-
-    //
-    // set freeform message parser
-    //
-    //setFreeformParser( FreeformParser::Ptr( new FreeformParser( M_worldmodel ) ) );
-
-    //
-    // set action generators
-    //
-    // M_action_generators.push_back( ActionGenerator::Ptr( new PassGenerator() ) );
-
-    //
-    // set communication planner
-    //
-    //M_communication = Communication::Ptr( new SampleCommunication() );
+    ang_vel = 0.0;
+    dir = 0.0;
+    vel = 0.0;
 }
 
 /*-------------------------------------------------------------------*/
@@ -190,11 +116,17 @@ SamplePlayer::initImpl( CmdLineParser & cmd_parser )
     return true;
 }
 
+/*-------------------------------------------------------------------*/
+/*!
+
+ */
 void SamplePlayer::velCallback(const geometry_msgs::Twist::ConstPtr &twist)
 {
+    const geometry_msgs::Vector3 &linear = twist->linear;
+
     ang_vel = twist->angular.z;
-    dir = 0;
-    vel = sqrt(twist->linear.x*twist->linear.x + twist->linear.y*twist->linear.y);
+    dir = atan(linear.y/linear.x);
+    vel = sqrt(linear.x*linear.x + linear.y*linear.y);
 }
 
 /*-------------------------------------------------------------------*/
@@ -205,99 +137,16 @@ void SamplePlayer::velCallback(const geometry_msgs::Twist::ConstPtr &twist)
 void
 SamplePlayer::actionImpl()
 {
-    //doTurn(1.0);
-    doDash(50.0, AngleDeg(90.0));
     if ( fullstateWorld().gameMode().type() == GameMode::BeforeKickOff
          || fullstateWorld().gameMode().type() == GameMode::AfterGoal_ )
     {
-        doMove(1.0, 1.0);
+        doMove(-10.0, 0.0);
     }
-
-//    //
-//    // update strategy and analyzer
-//    //
-//    Strategy::instance().update( world() );
-//    FieldAnalyzer::instance().update( world() );
-//
-//    //
-//    // prepare action chain
-//    //
-//    M_field_evaluator = createFieldEvaluator();
-//    M_action_generator = createActionGenerator();
-//
-//    ActionChainHolder::instance().setFieldEvaluator( M_field_evaluator );
-//    ActionChainHolder::instance().setActionGenerator( M_action_generator );
-//
-//    //
-//    // special situations (tackle, objects accuracy, intention...)
-//    //
-//    if ( doPreprocess() )
-//    {
-//        dlog.addText( Logger::TEAM,
-//                      __FILE__": preprocess done" );
-//        return;
-//    }
-//
-//    //
-//    // update action chain
-//    //
-//    ActionChainHolder::instance().update( world() );
-//
-//
-//    //
-//    // create current role
-//    //
-//    SoccerRole::Ptr role_ptr;
-//    {
-//        role_ptr = Strategy::i().createRole( world().self().unum(), world() );
-//
-//        if ( ! role_ptr )
-//        {
-//            std::cerr << config().teamName() << ": "
-//                      << world().self().unum()
-//                      << " Error. Role is not registerd.\nExit ..."
-//                      << std::endl;
-//            M_client->setServerAlive( false );
-//            return;
-//        }
-//    }
-//
-//
-//    //
-//    // override execute if role accept
-//    //
-//    if ( role_ptr->acceptExecution( world() ) )
-//    {
-//        role_ptr->execute( this );
-//        return;
-//    }
-//
-//
-//    //
-//    // play_on mode
-//    //
-//    if ( world().gameMode().type() == GameMode::PlayOn )
-//    {
-//        role_ptr->execute( this );
-//        return;
-//    }
-//
-//
-//    //
-//    // penalty kick mode
-//    //
-//    if ( world().gameMode().isPenaltyKickMode() )
-//    {
-//        dlog.addText( Logger::TEAM,
-//                      __FILE__": penalty kick" );
-//        Bhv_PenaltyKick().execute( this );
-//        return;
-//    }
-//
-//    //
-//    // other set play mode
-//    //
-//    Bhv_SetPlay().execute( this );
+    else
+    {
+        if(vel > 0) doDash(vel, dir);
+        if(ang_vel > 0) doTurn(ang_vel);
+    }
 }
 
 /*-------------------------------------------------------------------*/
@@ -307,13 +156,19 @@ SamplePlayer::actionImpl()
 void
 SamplePlayer::handleActionStart()
 {
+    const WorldModel &wm = this->fullstateWorld();
+
     raw_srv_msg.data = M_client->message();
     raw_srv_msg_pub.publish(raw_srv_msg);
 
-    self_pose.x = fullstateWorld().self().pos().x;
-    self_pose.y = fullstateWorld().self().pos().y;
-    self_pose.theta = fullstateWorld().self().pos().th().radian();
+    self_pose.x = wm.self().pos().x;
+    self_pose.y = wm.self().pos().y;
+    self_pose.theta = wm.self().pos().th().radian();
     self_pose_pub.publish(self_pose);
+
+    ball_pos.x = wm.ball().pos().absX();
+    ball_pos.y = wm.ball().pos().absY();
+    ball_pos_pub.publish(ball_pos);
 
     ros::spinOnce();
 }
@@ -328,13 +183,6 @@ SamplePlayer::handleActionEnd()
     if ( fullstateWorld().self().posValid() )
     {
     }
-
-    //
-    // ball position & velocity
-    //
-//    Vector2D diff = world().ball().rpos() - world().ball().rposPrev();
-//    Vector2D ball_move = diff + world().self().lastMove();
-//    Vector2D diff_vel = ball_move * ServerParam::i().ballDecay();
 }
 
 /*-------------------------------------------------------------------*/
@@ -344,28 +192,7 @@ SamplePlayer::handleActionEnd()
 void
 SamplePlayer::handleServerParam()
 {
-//    if ( KickTable::instance().createTables() )
-//    {
-//        std::cerr << world().teamName() << ' '
-//                  << world().self().unum() << ": "
-//                  << " KickTable created."
-//                  << std::endl;
-//    }
-//    else
-//    {
-//        std::cerr << world().teamName() << ' '
-//                  << world().self().unum() << ": "
-//                  << " KickTable failed..."
-//                  << std::endl;
-//        M_client->setServerAlive( false );
-//    }
-//
-//
-//    if ( ServerParam::i().keepawayMode() )
-//    {
-//        std::cerr << "set Keepaway mode communication." << std::endl;
-//        M_communication = Communication::Ptr( new KeepawayCommunication() );
-//    }
+
 }
 
 /*-------------------------------------------------------------------*/
@@ -396,10 +223,6 @@ SamplePlayer::handlePlayerType()
 void
 SamplePlayer::communicationImpl()
 {
-//    if ( M_communication )
-//    {
-//        M_communication->execute( this );
-//    }
 }
 
 /*-------------------------------------------------------------------*/
@@ -475,10 +298,10 @@ SamplePlayer::doPreprocess()
 //        return true;
 //    }
 //
-//    //
-//    // set default change view
-//    //
-//
+    //
+    // set default change view
+    //
+
 //    this->setViewAction( new View_Tactical() );
 //
 //    //
