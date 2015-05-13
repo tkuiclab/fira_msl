@@ -7,6 +7,9 @@ project(strategy)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   std_msgs
+  pluginlib
+  actionlib
+  roscpp
 )
 
 ## System dependencies are found with CMake's conventions
@@ -57,17 +60,18 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+add_action_files(
+  FILES
+  Role.action
+)
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs
+  std_msgs
+  actionlib_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -93,25 +97,37 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-# add_library(strategy
-#   src/${PROJECT_NAME}/strategy.cpp
-# )
+add_library(role_goalie
+  src/role_plugins/role_goalie.cpp
+)
+add_library(role_offensive
+  src/role_plugins/role_offensive.cpp
+)
+add_library(role_defensive
+  src/role_plugins/role_defensive.cpp
+)
 
 ## Declare a cpp executable
 # add_executable(strategy_node src/strategy_node.cpp)
+add_executable(roles src/roles.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(strategy_node strategy_generate_messages_cpp)
+add_dependencies(roles roscpp)
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(strategy_node
 #   ${catkin_LIBRARIES}
 # )
+target_link_libraries(roles
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

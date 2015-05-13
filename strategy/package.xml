@@ -49,6 +49,6 @@
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
-
+    <strategy plugin="${prefix}/role_goalie.xml" />
   </export>
 </package>
