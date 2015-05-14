@@ -8,17 +8,9 @@ namespace role_plugins
 class Offensive : public role_base::Role
 {
 public:
-    void initialize(double side_length)
-    {
-    }
+    void initialize(ros::NodeHandle& nh, std::string& name) {}
 
-    double area()
-    {
-    }
-
-    double getHeight()
-    {
-    }
+    void run() {}
 
 private:
 };

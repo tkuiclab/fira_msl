@@ -35,9 +35,9 @@ public:
         try
         {
             current_role = role_loader.createInstance(role_);
-            current_role->initialize(10.0);
+            current_role->initialize(nh_, action_name_);
 
-            ROS_INFO("Triangle area: %.2f", current_role->area());
+            //ROS_INFO("Triangle area: %.2f", current_role->area());
         }
         catch(pluginlib::PluginlibException& ex)
         {

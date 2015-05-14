@@ -9,14 +9,12 @@ namespace role_plugins
 class Goalie : public role_base::Role
 {
 public:
-    void initialize(double);
+    void initialize(ros::NodeHandle&, std::string&);
 
-    double area();
-
-    double getHeight();
+    void run();
 
 private:
-    double side_length_;
+    ros::NodeHandle nh_;
 };
 };
 #endif
