@@ -34,7 +34,7 @@ public:
         role_ = as_.acceptNewGoal()->name.c_str();
         try
         {
-            current_role = role_loader.createInstance("role_plugins::Goalie");
+            current_role = role_loader.createInstance(role_);
             current_role->initialize(10.0);
 
             ROS_INFO("Triangle area: %.2f", current_role->area());
