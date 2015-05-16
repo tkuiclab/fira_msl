@@ -1,5 +1,0 @@
-<library path="lib/librole_goalie">
-    <class type="role_plugins::Goalie" base_class_type="role_base::Role">
-    <description>This is a triangle plugin.</description>
-  </class>
-</library>

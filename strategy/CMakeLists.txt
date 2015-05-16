@@ -5,11 +5,14 @@ project(strategy)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  actionlib
+  actionlib_msgs
   geometry_msgs
   std_msgs
-  pluginlib
-  actionlib
   roscpp
+  decision_making
+  decision_making_parser
+  robot_task
 )
 
 ## System dependencies are found with CMake's conventions
@@ -59,12 +62,6 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
-## Generate actions in the 'action' folder
-add_action_files(
-  FILES
-  Role.action
-)
-
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
@@ -85,7 +82,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES strategy
-#  CATKIN_DEPENDS geometry_msgs std_msgs
+#  CATKIN_DEPENDS geometry_msgs std_msgs actionlib_msgs
 #  DEPENDS system_lib
 )
 
@@ -103,14 +100,14 @@ include_directories(
 
 ## Declare a cpp library
 add_library(role_goalie
-  src/role_plugins/role_goalie.cpp
+  src/roles/role_goalie.cpp
 )
-add_library(role_offensive
-  src/role_plugins/role_offensive.cpp
-)
-add_library(role_defensive
-  src/role_plugins/role_defensive.cpp
-)
+#add_library(role_offensive
+#  src/role_plugins/role_offensive.cpp
+#)
+#add_library(role_defensive
+#  src/role_plugins/role_defensive.cpp
+#)
 
 ## Declare a cpp executable
 # add_executable(strategy_node src/strategy_node.cpp)
@@ -126,6 +123,11 @@ add_dependencies(roles roscpp)
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(roles
+  role_goalie
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(role_goalie
   ${catkin_LIBRARIES}
 )
 
