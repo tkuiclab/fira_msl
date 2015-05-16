@@ -46,16 +46,16 @@ int main(int argc, char **argv)
 
     //while (ros::ok())
     //{
-        //while(client.recvMessage() > 0) {
-        //    std_msgs::String msg;
-        //    msg.data = client.message();
-        //    chatter_pub.publish(msg);
-        //    parse(client.message());
-        //}
+    //while(client.recvMessage() > 0) {
+    //    std_msgs::String msg;
+    //    msg.data = client.message();
+    //    chatter_pub.publish(msg);
+    //    parse(client.message());
+    //}
 
-        //ros::spinOnce();
+    //ros::spinOnce();
 
-        //loop_rate.sleep();
+    //loop_rate.sleep();
     //}
 
     return 0;

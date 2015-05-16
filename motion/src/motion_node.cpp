@@ -71,7 +71,7 @@ void sTime()
     gettimeofday(&start, NULL);
 }
 
-double eTime(string preStr){
+double eTime(string preStr) {
 
     gettimeofday(&end, NULL);
 
@@ -89,8 +89,8 @@ double eTime(string preStr){
     return mtime;
 }
 
-void averageTime(double iTime_MS){
-     if(iTime_MS > 0.0){
+void averageTime(double iTime_MS) {
+    if(iTime_MS > 0.0) {
         averageTime_sum += iTime_MS;
         averageTime_count++;
         double averageTime = (averageTime_sum) / (double)averageTime_count;
@@ -100,7 +100,7 @@ void averageTime(double iTime_MS){
 
 
 #ifdef DEBUG
-    int old_pwm_1,old_pwm_2,old_pwm_3;
+int old_pwm_1,old_pwm_2,old_pwm_3;
 #endif
 //input:
 //  x: velocity of x (m/s)
@@ -109,11 +109,11 @@ void averageTime(double iTime_MS){
 //output
 //  xml for fpga
 
-string speed2pwm(float v_x,float v_y,float v_yaw,int en){
+string speed2pwm(float v_x,float v_y,float v_yaw,int en) {
     //motor speed
-int en_1,en_2,en_3;
-int dir_1,dir_2,dir_3;
-std::ostringstream q;
+    int en_1,en_2,en_3;
+    int dir_1,dir_2,dir_3;
+    std::ostringstream q;
 
     float w1,w2,w3;
 
@@ -221,10 +221,10 @@ std::ostringstream q;
     dir_3 = w3 < 0.0 ? 1 : 0;
 
 
-     ROS_INFO("[1:en=%d,dir=%d,pwm=%d] [2:%d,%d,%d] [3:%d,%d,%d]\n",
-            en_1,dir_1,pwm_1,
-            en_2,dir_2,pwm_2,
-            en_3,dir_3,pwm_3);
+    ROS_INFO("[1:en=%d,dir=%d,pwm=%d] [2:%d,%d,%d] [3:%d,%d,%d]\n",
+             en_1,dir_1,pwm_1,
+             en_2,dir_2,pwm_2,
+             en_3,dir_3,pwm_3);
 
 
 
@@ -246,7 +246,7 @@ std::ostringstream q;
 
 }
 
-string speed2pwm_range(float range_x,float range_y,float range_yaw,int en){
+string speed2pwm_range(float range_x,float range_y,float range_yaw,int en) {
     float v_x,v_y,v_yaw;
     v_x = range_x/(float)SpeedMode_Range_Size * SpeedMode_Range_MaxSpeed;
     v_y = range_y/(float)SpeedMode_Range_Size * SpeedMode_Range_MaxSpeed;
@@ -255,7 +255,7 @@ string speed2pwm_range(float range_x,float range_y,float range_yaw,int en){
     return speed2pwm(v_x,v_y,v_yaw,en);
 }
 
-void send2FPGA_ori(string sendStr){
+void send2FPGA_ori(string sendStr) {
     printf("in sedn=========================\n");
     //std::cout << "sendStr   =   " << sendStr <<std::endl;
 
@@ -270,14 +270,14 @@ void send2FPGA_ori(string sendStr){
     client2.close();
 }
 
-void send2FPGA_RS232(string sendStr){
+void send2FPGA_RS232(string sendStr) {
 
 }
 
-void send2FPGA(string sendStr){
+void send2FPGA(string sendStr) {
     sendLock = true;
     //if(client->send(sendStr)){
-    if(client->send((void*)sendStr.c_str(),sendStr.size())){
+    if(client->send((void*)sendStr.c_str(),sendStr.size())) {
         string recvStr;
         client->recv(recvStr);
         //cout << "FPGA ECHO : " << recvStr << endl;
@@ -299,7 +299,7 @@ void moveCallback(const geometry_msgs::TwistPtr& msg)
 {
 #ifdef DEBUG
     //eTime("previous callback end -> now callback");
-   // sTime();
+    // sTime();
 #endif
 
     if(sendLock)    return;
@@ -331,14 +331,14 @@ void moveCallback(const geometry_msgs::TwistPtr& msg)
 
 
     string sendStr;
-    if(speedType==SpeedMode_MS){
+    if(speedType==SpeedMode_MS) {
         sendStr = speed2pwm(x,y,r,en);
-    }else {
+    } else {
         sendStr = speed2pwm_range(x,y,r,en);
     }
 
     //sTime();
-   // send2FPGA_ori(sendStr);
+    // send2FPGA_ori(sendStr);
     send2FPGA(sendStr);
     //eTime("send FPGA Time");
 
@@ -353,7 +353,7 @@ void moveCallback(const geometry_msgs::TwistPtr& msg)
 
 
 
-bool initConnectFPGA(){
+bool initConnectFPGA() {
     client = new LinuxSocket();
     client->setTimeout(5);
     client->create();
@@ -362,16 +362,16 @@ bool initConnectFPGA(){
     {
         //cout << "System::motion say [Connect FPGA Success]" << endl;
         return true;
-    }else{
+    } else {
         cout << "System::motion say [Connect FPGA 'FAIL']" << endl;
         return false;
     }
 }
 
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
 
-    if(!initConnectFPGA()){
+    if(!initConnectFPGA()) {
         return -1;
     }
 

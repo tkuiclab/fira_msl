@@ -1,15 +1,12 @@
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
-#include <boost/thread.hpp>
-#include <strategy/RoleAction.h>
+#include <robot_task/RobotTask.h>
+#include <robot_task/RobotTaskAction.h>
+using namespace std;
+using namespace robot_task;
 
-void spinThread()
-{
-    ros::spin();
-}
-
-void wold
+typedef actionlib::SimpleActionClient<RobotTaskAction> Client;
 
 int main (int argc, char **argv)
 {

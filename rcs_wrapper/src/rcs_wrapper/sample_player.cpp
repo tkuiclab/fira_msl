@@ -68,7 +68,7 @@ using namespace rcsc;
  */
 SamplePlayer::SamplePlayer(ros::NodeHandle *nh)
     : PlayerAgent(),
-    nh(nh)
+      nh(nh)
 //      M_communication(),
 //      M_field_evaluator( createFieldEvaluator() ),
 //      M_action_generator( createActionGenerator() )
@@ -138,7 +138,7 @@ void
 SamplePlayer::actionImpl()
 {
     if ( fullstateWorld().gameMode().type() == GameMode::BeforeKickOff
-         || fullstateWorld().gameMode().type() == GameMode::AfterGoal_ )
+            || fullstateWorld().gameMode().type() == GameMode::AfterGoal_ )
     {
         doMove(-10.0, 0.0);
     }

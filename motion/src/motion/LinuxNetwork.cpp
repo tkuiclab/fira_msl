@@ -40,12 +40,12 @@ bool LinuxSocket::create()
     timeout.tv_usec = 0;
 
     if (setsockopt (m_sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout,
-              sizeof(timeout)) < 0)
-      fprintf(stderr,"setsockopt failed\n");
+                    sizeof(timeout)) < 0)
+        fprintf(stderr,"setsockopt failed\n");
 
     if (setsockopt (m_sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout,
-              sizeof(timeout)) < 0)
-      fprintf(stderr,"setsockopt failed\n");
+                    sizeof(timeout)) < 0)
+        fprintf(stderr,"setsockopt failed\n");
 
 
 
@@ -209,9 +209,9 @@ bool LinuxSocket::connect ( const std::string host, const int port )
     status = ::connect ( m_sock, ( sockaddr * ) &m_addr, sizeof ( m_addr ) );
 
 
-    if ( status == 0 ){
+    if ( status == 0 ) {
         return true;
-    } else{
+    } else {
         fprintf(stderr,"[move] connect failed\n");
         return false;
     }

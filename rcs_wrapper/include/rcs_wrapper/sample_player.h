@@ -13,7 +13,7 @@
 #include <vector>
 
 class SamplePlayer
-    : public rcsc::PlayerAgent {
+        : public rcsc::PlayerAgent {
 private:
     ros::NodeHandle *nh;
 

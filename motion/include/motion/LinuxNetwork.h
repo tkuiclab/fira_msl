@@ -56,7 +56,9 @@ public:
     }
     void close();
 
-    void setTimeout(int sec){m_timeout = sec;}
+    void setTimeout(int sec) {
+        m_timeout = sec;
+    }
 };
 
 class LinuxSocketException
