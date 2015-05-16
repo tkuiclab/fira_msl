@@ -109,18 +109,20 @@ add_library(role_goalie
 #)
 
 ## Declare a cpp executable
-# add_executable(strategy_node src/strategy_node.cpp)
+add_executable(team_strategy src/team_strategy.cpp)
 add_executable(roles src/roles.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(strategy_node strategy_generate_messages_cpp)
+add_dependencies(team_strategy roscpp)
 add_dependencies(roles roscpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(strategy_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(team_strategy
+  ${catkin_LIBRARIES}
+)
+
 target_link_libraries(roles
   role_goalie
   ${catkin_LIBRARIES}
