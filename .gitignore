@@ -3,7 +3,7 @@
 *.swp
 *.swo
 *.py[cod]
-*.user.*
+*.user*
 
 # No toplevel cmake
 /CMakeLists.txt
