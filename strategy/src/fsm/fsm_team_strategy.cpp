@@ -1,81 +1,59 @@
-#include "fsm_team_strategy.h"
+#include "fsm/fsm_team_strategy.h"
 
-FSM(Wandering){
+FSM(TeamStrategy){
 FSM_STATES
 {
-    TurnRandom,
-    TurnLeft,
-    TurnRight,
-    Drive,
-    Pause,
-    DriveBackward
+    KickOff,
+    Offensive,
+    Defensive,
+    Goalie,
+    StandBy,
 }
-FSM_START(TurnRandom);
+FSM_START(StandBy);
 FSM_BGN
 {
-    FSM_STATE(TurnRandom)
+    FSM_STATE(KickOff)
     {
-        FSM_CALL_TASK(TurnRandom)
+        FSM_CALL_TASK(KickOff)
         FSM_TRANSITIONS
         {
-            FSM_ON_EVENT("/PAUSE", FSM_NEXT(Pause))
-            FSM_ON_EVENT("/TIMEOUT_TURN", FSM_NEXT(Drive))
-            FSM_ON_EVENT("/LEFT_OBSTACLE", FSM_NEXT(Drive))
-            FSM_ON_EVENT("/RIGHT_OBSTACLE", FSM_NEXT(Drive))
+            FSM_ON_EVENT("/STAND_BY", FSM_NEXT(StandBy))
+            FSM_ON_EVENT("/OFFENSIVE", FSM_NEXT(Offensive))
+            FSM_ON_EVENT("/DEFENSIVE", FSM_NEXT(Defensive))
+            FSM_ON_EVENT("/GOALIE", FSM_NEXT(Goalie))
         }
     }
-    FSM_STATE(TurnLeft)
+    FSM_STATE(Offensive)
     {
-        FSM_CALL_TASK(TurnLeft)
+        FSM_CALL_TASK(Offensive)
         FSM_TRANSITIONS
         {
-            FSM_ON_EVENT("/PAUSE", FSM_NEXT(Pause))
-            FSM_ON_EVENT("/TIMEOUT_TURN", FSM_NEXT(Drive))
-            FSM_ON_EVENT("/LEFT_OBSTACLE", FSM_NEXT(Drive))
+            FSM_ON_EVENT("/STAND_BY", FSM_NEXT(StandBy))
         }
     }
-    FSM_STATE(TurnRight)
+    FSM_STATE(Defensive)
     {
-        FSM_CALL_TASK(TurnRight)
+        FSM_CALL_TASK(Defensive)
         FSM_TRANSITIONS
         {
-            FSM_ON_EVENT("/PAUSE", FSM_NEXT(Pause))
-            FSM_ON_EVENT("/TIMEOUT_TURN", FSM_NEXT(Drive))
-            FSM_ON_EVENT("/RIGHT_OBSTACLE", FSM_NEXT(Drive))
+            FSM_ON_EVENT("/STAND_BY", FSM_NEXT(StandBy))
         }
     }
-    FSM_STATE(Drive)
+    FSM_STATE(Goalie)
     {
-        FSM_CALL_TASK(Drive)
+        FSM_CALL_TASK(Goalie)
 
         FSM_TRANSITIONS
         {
-            FSM_ON_EVENT("/PAUSE", FSM_NEXT(Pause))
-            FSM_ON_EVENT("/FRONT_AND_RIGHT_OBSTACLE", FSM_NEXT(DriveBackward))
-            FSM_ON_EVENT("/FRONT_AND_LEFT_OBSTACLE", FSM_NEXT(DriveBackward))
-            FSM_ON_EVENT("/RIGHT_OBSTACLE", FSM_NEXT(TurnLeft))
-            FSM_ON_EVENT("/LEFT_OBSTACLE", FSM_NEXT(TurnRight))
-            FSM_ON_EVENT("/FRONT_OBSTACLE", FSM_NEXT(TurnRandom))
-            FSM_ON_EVENT("/TIMEOUT_DRIVE", FSM_NEXT(TurnRandom))
+            FSM_ON_EVENT("/STAND_BY", FSM_NEXT(StandBy))
         }
     }
-    FSM_STATE(DriveBackward)
+    FSM_STATE(StandBy)
     {
-        FSM_CALL_TASK(DriveBackward)
-
+        FSM_CALL_TASK(StandBy)
         FSM_TRANSITIONS
         {
-            FSM_ON_EVENT("/TIMEOUT_BACKWARD", FSM_NEXT(TurnRandom))
-            FSM_ON_EVENT("/PAUSE", FSM_NEXT(Pause))
-        }
-    }
-    FSM_STATE(Pause)
-    {
-        FSM_CALL_TASK(StopRobot)
-
-        FSM_TRANSITIONS
-        {
-            FSM_ON_EVENT("/RESUME", FSM_NEXT(TurnRandom))
+            FSM_ON_EVENT("/KICK_OFF", FSM_NEXT(KickOff))
         }
     }
 }

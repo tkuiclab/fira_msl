@@ -98,6 +98,9 @@ include_directories(
 )
 
 ## Declare a cpp library
+add_library(fsm_team_strategy
+  src/fsm/fsm_team_strategy.cpp
+)
 add_library(role_goalie
   src/roles/role_goalie.cpp
 )
@@ -120,18 +123,19 @@ add_dependencies(roles roscpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(team_strategy
+  fsm_team_strategy
   ${catkin_LIBRARIES}
 )
-
+target_link_libraries(fsm_team_strategy
+  ${catkin_LIBRARIES}
+)
 target_link_libraries(roles
   role_goalie
   ${catkin_LIBRARIES}
 )
-
 target_link_libraries(role_goalie
   ${catkin_LIBRARIES}
 )
-
 decision_making_parsing(
 	src/fsm/fsm_team_strategy.cpp
 )
