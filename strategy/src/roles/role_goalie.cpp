@@ -9,15 +9,18 @@ RobotTask::TaskResult GoalieServer::task(const string& name, const string& uid, 
     while(true) {
 
         if(isPreempt()) {
-
+            ROS_INFO("Task STOP");
             return TaskResult::PREEMPTED();
         }
+
+        ROS_INFO("Task RUN");
+        sleep(1000);
 
     }
 
     //if( retValue > 0 ){
     //	return TaskResult(retValue, "ERROR");
     //}
-    return TaskResult(SUCCESS, "OK");
+    return TaskResult::SUCCESS();
 }
 

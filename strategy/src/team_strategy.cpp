@@ -1,6 +1,4 @@
 #include <ros/ros.h>
-#include <actionlib/client/simple_action_client.h>
-#include <actionlib/client/terminal_state.h>
 #include <robot_task/RobotTask.h>
 #include <robot_task/RobotTaskAction.h>
 
@@ -9,15 +7,40 @@
 using namespace std;
 using namespace robot_task;
 
+void eventTest(const std_msgs::String::ConstPtr& msg, decision_making::EventQueue* q) {
+   q->raiseEvent(msg->data.c_str());
+}
+
+decision_making::TaskResult standBy(std::string, const decision_making::FSMCallContext& c, decision_making::EventQueue& e) {
+    ROS_INFO("Stand By");
+    e.raiseEvent("/KICK_OFF");
+    return decision_making::TaskResult::SUCCESS();
+}
+
+decision_making::TaskResult kickOff(std::string, const decision_making::FSMCallContext& c, decision_making::EventQueue& e) {
+    ROS_INFO("Kick Off");
+    e.raiseEvent("/GOALIE");
+    return decision_making::TaskResult::SUCCESS();
+}
+
 int main (int argc, char **argv)
 {
     ros::init(argc, argv, "team_strategy");
     ros::NodeHandle nh;
-    //    = nh_.subscribe("/random_number", 1, );
+
+    RosEventQueue* req = new RosEventQueue;
+    ros::Subscriber sub = nh.subscribe<void>("/event_test", 1000,
+            boost::function<void(const std_msgs::String::ConstPtr)>(boost::bind(eventTest, _1, req))
+            );
     ros_decision_making_init(argc, argv);
 
-    LocalTasks::registrate("goalie", callTask);
+    LocalTasks::registrate("StandBy", standBy);
+    LocalTasks::registrate("KickOff", kickOff);
 
+    ros::AsyncSpinner spinner(1);
+    spinner.start();
+
+    FsmTeamStrategy(NULL, req);
     //exit
     return 0;
 }
