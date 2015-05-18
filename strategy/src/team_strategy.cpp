@@ -7,6 +7,7 @@
 using namespace std;
 using namespace robot_task;
 
+
 void eventTest(const std_msgs::String::ConstPtr& msg, decision_making::EventQueue* q) {
    q->raiseEvent(msg->data.c_str());
 }
@@ -23,6 +24,10 @@ decision_making::TaskResult kickOff(std::string, const decision_making::FSMCallC
     return decision_making::TaskResult::SUCCESS();
 }
 
+void run_fsm(RosEventQueue *req) {
+    FsmTeamStrategy(NULL, req);
+}
+
 int main (int argc, char **argv)
 {
     ros::init(argc, argv, "team_strategy");
@@ -37,10 +42,10 @@ int main (int argc, char **argv)
     LocalTasks::registrate("StandBy", standBy);
     LocalTasks::registrate("KickOff", kickOff);
 
-    ros::AsyncSpinner spinner(1);
-    spinner.start();
+    boost::thread_group threads;
+	threads.add_thread(new boost::thread(boost::bind(&run_fsm, req)));
 
-    FsmTeamStrategy(NULL, req);
-    //exit
+    ros::spin();
+
     return 0;
 }

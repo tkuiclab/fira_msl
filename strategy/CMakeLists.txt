@@ -146,8 +146,8 @@ target_link_libraries(role_goalie
   ${catkin_LIBRARIES}
 )
 decision_making_parsing(
+	src/fsm/fsm_goal_keeper.cpp
 	src/fsm/fsm_team_strategy.cpp
-	src/fsm/fsm_goal_keeper
 )
 #############
 ## Install ##
