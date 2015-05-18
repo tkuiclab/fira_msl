@@ -1,5 +1,33 @@
 #include "fsm/fsm_team_strategy.h"
-#include "fsm/fsm_goal_keeper.h"
+
+FSM(GoalKeeper)
+{
+	FSM_STATES
+	{
+        FindBall,
+        GotBall,
+	}
+	FSM_START(FindBall);
+	FSM_BGN
+	{
+		FSM_STATE(FindBall)
+		{
+            FSM_CALL_TASK(Goalie)
+			FSM_TRANSITIONS
+			{
+				FSM_ON_EVENT("/GOT_BALL", FSM_NEXT(GotBall));
+			}
+		}
+		FSM_STATE(GotBall)
+		{
+			FSM_TRANSITIONS
+			{
+				FSM_ON_EVENT("/LOST_BALL", FSM_NEXT(FindBall));
+			}
+		}
+	}
+	FSM_END
+}
 
 FSM(Offensive)
 {
@@ -111,7 +139,6 @@ FSM_BGN
     FSM_STATE(GoalKeeper)
     {
         FSM_CALL_FSM(GoalKeeper)
-
         FSM_TRANSITIONS
         {
             FSM_ON_EVENT("/STAND_BY", FSM_NEXT(StandBy))
