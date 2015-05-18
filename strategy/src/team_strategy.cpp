@@ -19,7 +19,7 @@ decision_making::TaskResult standBy(std::string, const decision_making::FSMCallC
 
 decision_making::TaskResult kickOff(std::string, const decision_making::FSMCallContext& c, decision_making::EventQueue& e) {
     ROS_INFO("Kick Off");
-    e.raiseEvent("/GOALIE");
+    e.raiseEvent("/GOAL_KEEPER");
     return decision_making::TaskResult::SUCCESS();
 }
 
