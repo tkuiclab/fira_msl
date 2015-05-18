@@ -43,9 +43,10 @@ int main (int argc, char **argv)
     LocalTasks::registrate("KickOff", kickOff);
 
     boost::thread_group threads;
-	threads.add_thread(new boost::thread(boost::bind(&run_fsm, req)));
+	threads.add_thread(new boost::thread(boost::bind(run_fsm, req)));
 
     ros::spin();
+    threads.join_all();
 
     return 0;
 }
