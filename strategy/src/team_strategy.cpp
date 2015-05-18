@@ -25,7 +25,7 @@ decision_making::TaskResult kickOff(std::string, const decision_making::FSMCallC
 }
 
 void run_fsm(RosEventQueue *req) {
-    FsmTeamStrategy(NULL, req);
+    FsmGameState(NULL, req);
     ROS_INFO("FSM STOP!!!");
 }
 

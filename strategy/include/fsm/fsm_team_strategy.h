@@ -12,5 +12,5 @@ using namespace decision_making;
 
 #define foreach BOOST_FOREACH
 
-FSM_HEADER(TeamStrategy)
+FSM_HEADER(GameState)
 
