@@ -18,18 +18,18 @@ from smach_ros import *
 
 
 def main():
-    rospy.init_node("role_offensive")
+    rospy.init_node("role_goal_keeper")
 
     # Construct state machine
-    offensive_sm = StateMachine(
+    goal_keeper_sm = StateMachine(
             outcomes=['goal','aborted','preempted'],
             input_keys = ['input'],
             output_keys = ['output'])
 
     # Set the initial state explicitly
-    offensive_sm.set_initial_state(['SEARCH_BALL'])
+    goal_keeper_sm.set_initial_state(['SEARCH_BALL'])
 
-    with offensive_sm:
+    with goal_keeper_sm:
         StateMachine.add('SEARCH_BALL',
                 SimpleActionState('search_ball', SearchBallAction,
                     goal),
@@ -42,17 +42,17 @@ def main():
 
 
     # Run state machine introspection server
-    intro_server = IntrospectionServer('offensive',offensive_sm,'/OFFENSIVE')
+    intro_server = IntrospectionServer('goal_keeper',goal_keeper_sm,'/GOAL_KEEPER')
     intro_server.start()
 
     # Run state machine action server
     sms = ActionServerWrapper(
-            'offensive', OffensiveAction, offensive_sm,
+            'goal_keeper', OffensiveAction, goal_keeper_sm,
             succeeded_outcomes = ['goal'],
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
-            goal_slots_map = {'command':'recharge_command'},
-            result_slots_map = {'state':'recharge_state'})
+            goal_slots_map = {},
+            result_slots_map = {})
     sms.run_server()
 
     rospy.spin()
