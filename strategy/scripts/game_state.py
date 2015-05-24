@@ -1,16 +1,11 @@
 #!/usr/bin/env python
-
-#import roslib
-#roslib.load_manifest('pr2_plugs_actions')
-
 import rospy
 
 import actionlib
 
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import *
-
-from std_srvs.srv import *
+from strategy.msg import *
 
 # State machine classes
 import smach
@@ -21,7 +16,7 @@ from smach_ros import *
 def main():
     rospy.init_node("game_state")
 
-    def state_cb(outcom_map):
+    def state_cb(outcome_map):
         if outcome_map['IS_KICK_OFF'] == 'true':
             return 'kick_off'
         if outcome_map['IS_FREE_BALL'] == 'true':
@@ -30,40 +25,46 @@ def main():
             return 'free_kick'
         return 'no_state'
 
-    state_con = Concurrence(outcoms = ['kick_off', 'free_kick', 'free_ball'],
-            default_outcome = 'no_state',
+    state_con = Concurrence(outcomes = ['kick_off', 'free_kick', 'free_ball'],
+            default_outcome = 'kick_off',
             child_termination_cb = lambda state_outcomes: True,
-            out_cb = role_cb,
+            outcome_cb = state_cb,
             input_keys = ['game_state'])
 
     with state_con:
         Concurrence.add('IS_KICK_OFF',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'KICK_OFF'))
+                ConditionState(cond_cb = lambda ud: ud.game_state == 'KICK_OFF',
+                    input_keys = ['game_state']))
         Concurrence.add('IS_FREE_KICK',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'FREE_KICK'))
+                ConditionState(cond_cb = lambda ud: ud.game_state == 'FREE_KICK',
+                    input_keys = ['game_state']))
         Concurrence.add('IS_FREE_BALL',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'FREE_BALL'))
+                ConditionState(cond_cb = lambda ud: ud.game_state == 'FREE_BALL',
+                    input_keys = ['game_state']))
 
 
 
     # Construct state machine
     game_state_sm = StateMachine(
-            outcomes=['successed','aborted','preempted'],
+            outcomes=['goal','aborted','preempted'],
             input_keys = ['game_state'])
 
-    game_state_sm.set_initial_state(['STAND_BY'])
+    game_state_sm.set_initial_state(['GAME_STATE'])
 
     with game_state_sm:
         StateMachine.add('GAME_STATE', state_con,
-                transistions = {'goal_keeper': 'GOAL_KEEPER',
-                    'offensive': 'OFFENSIVE',
-                    'deffensive': 'DEFFENSIVE'})
+                transitions = {'kick_off': 'KICK_OFF',
+                    'free_kick': 'FREE_KICK',
+                    'free_ball': 'FREE_BALL'})
         StateMachine.add('KICK_OFF',
-                SimpleActionState('kick_off', GoalKeeperAction)}
+                SimpleActionState('kick_off', EmptyAction),
+                {'succeeded': 'goal'})
         StateMachine.add('FREE_KICK',
-                SimpleActionState('free_kick', FreeKickAction)}
+                SimpleActionState('free_kick', EmptyAction),
+                {'succeeded': 'goal'})
         StateMachine.add('FREE_BALL',
-                SimpleActionState('free_ball', FreeBallAction)}
+                SimpleActionState('free_ball', EmptyAction),
+                {'succeeded': 'goal'})
 
 
     # Run state machine introspection server
