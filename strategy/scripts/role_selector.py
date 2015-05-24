@@ -28,7 +28,7 @@ def main():
             return 'defensive'
         return 'no_role'
 
-    role_selector_con = Concurrence(outcomes = ['goal_keeper', 'offensive', 'defensive'],
+    role_selector_con = Concurrence(outcomes = ['goal_keeper', 'offensive', 'defensive', 'no_role'],
             default_outcome = 'offensive',
             child_termination_cb = lambda state_outcomes: True,
             outcome_cb = role_selector_cb,
@@ -36,13 +36,13 @@ def main():
 
     with role_selector_con:
         Concurrence.add('IS_GOAL_KEEPER',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'GOAL_KEEPER',
+                ConditionState(cond_cb = lambda ud: ud.role == 'GOAL_KEEPER',
                     input_keys = ['role']))
         Concurrence.add('IS_OFFENSIVE',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'OFFENSIVE',
+                ConditionState(cond_cb = lambda ud: ud.role == 'OFFENSIVE',
                     input_keys = ['role']))
         Concurrence.add('IS_DEFENSIVE',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'DEFENSIVE',
+                ConditionState(cond_cb = lambda ud: ud.role == 'DEFENSIVE',
                     input_keys = ['role']))
 
     # Construct state machine
@@ -57,7 +57,8 @@ def main():
         StateMachine.add('ROLE_SELECT', role_selector_con,
                 transitions = {'goal_keeper': 'GOAL_KEEPER',
                     'offensive': 'OFFENSIVE',
-                    'defensive': 'DEFFENSIVE'})
+                    'defensive': 'DEFFENSIVE',
+                    'no_role': 'ROLE_SELECT'})
         StateMachine.add('GOAL_KEEPER',
                 SimpleActionState('goal_keeper', EmptyAction),
                 {'succeeded': 'goal'})
@@ -80,7 +81,7 @@ def main():
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
             goal_slots_map = {'role':'role'},
-            result_slots_map = {'state':'state'})
+            result_slots_map = {})
     sms.run_server()
 
     rospy.spin()

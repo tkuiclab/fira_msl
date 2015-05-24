@@ -46,19 +46,16 @@ def main():
 
     # Construct state machine
     game_state_sm = StateMachine(
-            outcomes=['goal','aborted','preempted'],
+            outcomes=['goal', 'game_start', 'aborted','preempted'],
             input_keys = ['game_state'])
 
     game_state_sm.set_initial_state(['GAME_STATE'])
 
     with game_state_sm:
         StateMachine.add('GAME_STATE', state_con,
-                transitions = {'kick_off': 'KICK_OFF',
+                transitions = {'kick_off': 'game_start',
                     'free_kick': 'FREE_KICK',
                     'free_ball': 'FREE_BALL'})
-        StateMachine.add('KICK_OFF',
-                SimpleActionState('kick_off', EmptyAction),
-                {'succeeded': 'goal'})
         StateMachine.add('FREE_KICK',
                 SimpleActionState('free_kick', EmptyAction),
                 {'succeeded': 'goal'})
@@ -74,7 +71,7 @@ def main():
     # Run state machine action server
     sms = ActionServerWrapper(
             'game_state', GameStateAction, game_state_sm,
-            succeeded_outcomes = ['goal'],
+            succeeded_outcomes = ['goal', 'game_start'],
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
             goal_slots_map = {'game_state':'game_state'},
