@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-#import roslib
-#roslib.load_manifest('pr2_plugs_actions')
 
 import rospy
 
 import actionlib
 
+from actionlib.msg import *
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import *
 
@@ -22,22 +21,19 @@ def main():
 
     # Construct state machine
     offensive_sm = StateMachine(
-            outcomes=['goal','aborted','preempted'],
-            input_keys = ['input'],
-            output_keys = ['output'])
+            outcomes=['goal','aborted','preempted'])
 
     # Set the initial state explicitly
     offensive_sm.set_initial_state(['SEARCH_BALL'])
 
     with offensive_sm:
         StateMachine.add('SEARCH_BALL',
-                SimpleActionState('search_ball', SearchBallAction,
-                    goal),
+                SimpleActionState('search_ball', TestAction),
                 { 'succeeded':'CHASE_BALL' })
 
         StateMachine.add('CHASE_BALL',
-                SimpleActionState('chase_ball', ChaseBallAction),
-                { 'succeeded':'' })
+                SimpleActionState('chase_ball', TestAction),
+                { 'succeeded':'goal', 'aborted': 'SEARCH_BALL' })
 
 
 
@@ -47,12 +43,12 @@ def main():
 
     # Run state machine action server
     sms = ActionServerWrapper(
-            'offensive', OffensiveAction, offensive_sm,
+            'role_offensive', TestAction, offensive_sm,
             succeeded_outcomes = ['goal'],
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
-            goal_slots_map = {'command':'offensive_command'},
-            result_slots_map = {'state':'offensive_state'})
+            goal_slots_map = {},
+            result_slots_map = {})
     sms.run_server()
 
     rospy.spin()

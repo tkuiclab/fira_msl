@@ -39,16 +39,16 @@ def main():
                 transitions = {
                     'goal_keeper': 'GOAL_KEEPER',
                     'offensive': 'OFFENSIVE',
-                    'defensive': 'DEFFENSIVE',
+                    'defensive': 'DEFENSIVE',
                     'no_role': 'aborted'})
         StateMachine.add('GOAL_KEEPER',
-                SimpleActionState('goal_keeper', TestAction),
+                SimpleActionState('role_goal_keeper', TestAction),
                 {'succeeded': 'goal'})
         StateMachine.add('OFFENSIVE',
-                SimpleActionState('goal_keeper', TestAction),
+                SimpleActionState('role_offensive', TestAction),
                 {'succeeded': 'goal'})
-        StateMachine.add('DEFFENSIVE',
-                SimpleActionState('goal_keeper', TestAction),
+        StateMachine.add('DEFENSIVE',
+                SimpleActionState('role_defensive', TestAction),
                 {'succeeded': 'goal'})
 
 
