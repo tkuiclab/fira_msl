@@ -3,6 +3,7 @@ import rospy
 
 import actionlib
 
+from actionlib.msg import *
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import *
 from strategy.msg import *
@@ -25,7 +26,7 @@ def main():
             return 'free_kick'
         return 'no_state'
 
-    state_con = Concurrence(outcomes = ['kick_off', 'free_kick', 'free_ball'],
+    state_con = Concurrence(outcomes = ['kick_off', 'free_kick', 'free_ball', 'no_state'],
             default_outcome = 'kick_off',
             child_termination_cb = lambda state_outcomes: True,
             outcome_cb = state_cb,
@@ -55,7 +56,8 @@ def main():
         StateMachine.add('GAME_STATE', state_con,
                 transitions = {'kick_off': 'game_start',
                     'free_kick': 'FREE_KICK',
-                    'free_ball': 'FREE_BALL'})
+                    'free_ball': 'FREE_BALL',
+                    'no_state': 'aborted'})
         StateMachine.add('FREE_KICK',
                 SimpleActionState('free_kick', TestAction),
                 {'succeeded': 'goal'})

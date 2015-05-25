@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-import roslib
-roslib.load_manifest('strategy')
-
 import rospy
 
 from actionlib import *
@@ -33,6 +30,9 @@ class StrategyMain:
 
     def role_cb(self, msg):
         self.role = msg.data
+        self.role_selector_client.cancel_all_goals()
+        self.role_selector_client.send_goal(
+                RoleGoal(role = self.role))
 
     def world_model_cb(self, msg):
         rospy.loginfo(msg.data)
@@ -48,7 +48,7 @@ class StrategyMain:
 
     def game_state_done_cb(self, result_state, result):
         self.role_selector_client.send_goal(
-                RoleGoal(role = self.role)
+                RoleGoal(role = self.role))
 
 def main():
     rospy.init_node('strategy', anonymous = True)

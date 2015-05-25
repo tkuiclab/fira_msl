@@ -6,6 +6,7 @@ import rospy
 
 import actionlib
 
+from actionlib.msg import *
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import *
 from strategy.msg import *
@@ -58,7 +59,7 @@ def main():
                 transitions = {'goal_keeper': 'GOAL_KEEPER',
                     'offensive': 'OFFENSIVE',
                     'defensive': 'DEFFENSIVE',
-                    'no_role': 'ROLE_SELECT'})
+                    'no_role': 'aborted'})
         StateMachine.add('GOAL_KEEPER',
                 SimpleActionState('goal_keeper', TestAction),
                 {'succeeded': 'goal'})
