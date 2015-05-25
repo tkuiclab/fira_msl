@@ -17,34 +17,6 @@ from smach_ros import *
 def main():
     rospy.init_node("game_state")
 
-    def state_cb(outcome_map):
-        if outcome_map['IS_KICK_OFF'] == 'true':
-            return 'kick_off'
-        if outcome_map['IS_FREE_BALL'] == 'true':
-            return 'free_ball'
-        if outcome_map['IS_FREE_KICK'] == 'true':
-            return 'free_kick'
-        return 'no_state'
-
-    state_con = Concurrence(outcomes = ['kick_off', 'free_kick', 'free_ball', 'no_state'],
-            default_outcome = 'kick_off',
-            child_termination_cb = lambda state_outcomes: True,
-            outcome_cb = state_cb,
-            input_keys = ['game_state'])
-
-    with state_con:
-        Concurrence.add('IS_KICK_OFF',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'KICK_OFF',
-                    input_keys = ['game_state']))
-        Concurrence.add('IS_FREE_KICK',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'FREE_KICK',
-                    input_keys = ['game_state']))
-        Concurrence.add('IS_FREE_BALL',
-                ConditionState(cond_cb = lambda ud: ud.game_state == 'FREE_BALL',
-                    input_keys = ['game_state']))
-
-
-
     # Construct state machine
     game_state_sm = StateMachine(
             outcomes=['goal', 'game_start', 'aborted','preempted'],
@@ -53,8 +25,15 @@ def main():
     game_state_sm.set_initial_state(['GAME_STATE'])
 
     with game_state_sm:
-        StateMachine.add('GAME_STATE', state_con,
-                transitions = {'kick_off': 'game_start',
+        @smach.cb_interface(input_keys=['game_state'],
+                outcomes = ['kick_off', 'free_kick', 'free_ball', 'no_state'])
+        def game_state_cb(ud):
+            return ud.game_state
+
+        StateMachine.add('GAME_STATE',
+                CBState(game_state_cb),
+                transitions = {
+                    'kick_off': 'game_start',
                     'free_kick': 'FREE_KICK',
                     'free_ball': 'FREE_BALL',
                     'no_state': 'aborted'})

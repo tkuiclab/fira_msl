@@ -9,6 +9,7 @@ class StrategyMain:
     def __init__(self):
 
         self.role = 'no_role'
+        self.game_state = 'no_state'
 
         self.game_state_client = SimpleActionClient('game_state', GameStateAction)
         if self.game_state_client.wait_for_server(rospy.Duration(120.0)):
@@ -38,7 +39,7 @@ class StrategyMain:
         rospy.loginfo(msg.data)
 
     def game_state_cb(self, msg):
-        rospy.loginfo(msg.data)
+        self.game_state = msg.data
         self.game_state_client.cancel_all_goals()
         self.role_selector_client.cancel_all_goals()
 
@@ -49,6 +50,7 @@ class StrategyMain:
     def game_state_done_cb(self, result_state, result):
         self.role_selector_client.send_goal(
                 RoleGoal(role = self.role))
+
 
 def main():
     rospy.init_node('strategy', anonymous = True)

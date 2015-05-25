@@ -6,10 +6,9 @@ import rospy
 
 import actionlib
 
+from actionlib.msg import *
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import *
-
-from std_srvs.srv import *
 
 # State machine classes
 import smach
@@ -31,13 +30,12 @@ def main():
 
     with goal_keeper_sm:
         StateMachine.add('SEARCH_BALL',
-                SimpleActionState('search_ball', SearchBallAction,
-                    goal),
+                SimpleActionState('search_ball', TestAction),
                 { 'succeeded':'CHASE_BALL' })
 
         StateMachine.add('CHASE_BALL',
-                SimpleActionState('chase_ball', ChaseBallAction),
-                { 'succeeded':'' })
+                SimpleActionState('chase_ball', TestAction),
+                { 'succeeded':'goal' })
 
 
 
@@ -47,7 +45,7 @@ def main():
 
     # Run state machine action server
     sms = ActionServerWrapper(
-            'goal_keeper', OffensiveAction, goal_keeper_sm,
+            'goal_keeper', TestAction, goal_keeper_sm,
             succeeded_outcomes = ['goal'],
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
