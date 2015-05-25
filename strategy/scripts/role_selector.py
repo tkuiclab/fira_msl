@@ -60,13 +60,13 @@ def main():
                     'defensive': 'DEFFENSIVE',
                     'no_role': 'ROLE_SELECT'})
         StateMachine.add('GOAL_KEEPER',
-                SimpleActionState('goal_keeper', EmptyAction),
+                SimpleActionState('goal_keeper', TestAction),
                 {'succeeded': 'goal'})
         StateMachine.add('OFFENSIVE',
-                SimpleActionState('goal_keeper', EmptyAction),
+                SimpleActionState('goal_keeper', TestAction),
                 {'succeeded': 'goal'})
         StateMachine.add('DEFFENSIVE',
-                SimpleActionState('goal_keeper', EmptyAction),
+                SimpleActionState('goal_keeper', TestAction),
                 {'succeeded': 'goal'})
 
 

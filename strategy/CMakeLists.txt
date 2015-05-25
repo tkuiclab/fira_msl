@@ -64,7 +64,6 @@ add_action_files(
   FILES
   GameState.action
   Role.action
-  Empty.action
 )
 
 ## Generate added messages and services with any dependencies listed here

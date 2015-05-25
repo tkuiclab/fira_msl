@@ -57,10 +57,10 @@ def main():
                     'free_kick': 'FREE_KICK',
                     'free_ball': 'FREE_BALL'})
         StateMachine.add('FREE_KICK',
-                SimpleActionState('free_kick', EmptyAction),
+                SimpleActionState('free_kick', TestAction),
                 {'succeeded': 'goal'})
         StateMachine.add('FREE_BALL',
-                SimpleActionState('free_ball', EmptyAction),
+                SimpleActionState('free_ball', TestAction),
                 {'succeeded': 'goal'})
 
 
