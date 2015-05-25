@@ -8,8 +8,8 @@ from strategy.msg import *
 class StrategyMain:
     def __init__(self):
 
-        self.role = 'no_role'
-        self.game_state = 'no_state'
+        self.role = rospy.get_param('role', 'no_role')
+        self.game_state = rospy.get_param('game_state', 'no_state')
 
         self.game_state_client = SimpleActionClient('game_state', GameStateAction)
         if self.game_state_client.wait_for_server(rospy.Duration(120.0)):
