@@ -25,13 +25,10 @@ def main():
     game_state_sm.set_initial_state(['GAME_STATE'])
 
     with game_state_sm:
-        @smach.cb_interface(input_keys=['game_state'],
-                outcomes = ['kick_off', 'free_kick', 'free_ball', 'no_state'])
-        def game_state_cb(ud):
-            return ud.game_state
-
         StateMachine.add('GAME_STATE',
-                CBState(game_state_cb),
+                CBState(cb = lambda ud: ud.game_state,
+                    input_keys = ['game_state'],
+                    outcomes = ['kick_off', 'free_kick', 'free_ball', 'no_state']),
                 transitions = {
                     'kick_off': 'game_start',
                     'free_kick': 'FREE_KICK',

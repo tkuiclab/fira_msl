@@ -32,13 +32,10 @@ def main():
     role_sm.set_initial_state(['ROLE_SELECT'])
 
     with role_sm:
-        @smach.cb_interface(input_keys = ['role'],
-                outcomes = ['goal_keeper', 'offensive', 'defensive', 'no_role'])
-        def role_cb(ud):
-            return ud.role
-
         StateMachine.add('ROLE_SELECT',
-                CBState(role_cb),
+                CBState(cb = lambda ud: ud.role,
+                    input_keys = ['role'],
+                    outcomes = ['goal_keeper', 'offensive', 'defensive', 'no_role']),
                 transitions = {
                     'goal_keeper': 'GOAL_KEEPER',
                     'offensive': 'OFFENSIVE',
