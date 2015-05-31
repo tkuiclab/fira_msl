@@ -28,11 +28,11 @@ def main():
 
     with offensive_sm:
         StateMachine.add('SEARCH_BALL',
-                SimpleActionState('search_ball', TestAction),
+                SimpleActionState('bhv_search_ball', TestAction),
                 { 'succeeded':'CHASE_BALL' })
 
         StateMachine.add('CHASE_BALL',
-                SimpleActionState('chase_ball', TestAction),
+                SimpleActionState('bhv_chase_ball', TestAction),
                 { 'succeeded':'goal', 'aborted': 'SEARCH_BALL' })
 
 
