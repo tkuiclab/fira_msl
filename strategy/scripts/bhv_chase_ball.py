@@ -9,15 +9,16 @@ from fira_msl_msgs.msg import *
 class RefServer (object):
 
     def __init__(self, name):
-        self.sub = rospy.Subscriber("/world_model/ball_pose", Pose2D, self.found_ball_cb)
-
-        self._ac = SimpleAction('move_in_line', GoToPoseAction)
-        self._ac.wait_for_server()
-
         self._as = SimpleActionServer(name, TestAction, auto_start=False)
         self._as.register_goal_callback(self.goal_cb)
         self._as.register_preempt_callback(self.preempt_cb)
         self._as.start()
+
+        self.sub = rospy.Subscriber("/world_model/ball_pose", Pose2D, self.found_ball_cb)
+
+        self._ac = SimpleActionClient('move_in_line', GoToPoseAction)
+        self._ac.wait_for_server()
+
         rospy.loginfo("Creating ActionServer [%s]", name)
 
     def goal_cb(self):
@@ -31,8 +32,9 @@ class RefServer (object):
             return
 
         self._ac.send_goal(GoToPoseGoal(msg))
-        self._as.set_succeeded()
-        return
+
+        if self._ac.get_result():
+            self._as.set_succeeded()
 
 def main():
     rospy.init_node("bhv_chase_ball")
