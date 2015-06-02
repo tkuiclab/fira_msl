@@ -12,11 +12,11 @@ def test_client():
 
     client.wait_for_server()
 
-    goal = GoToPoseGoal(Pose2D(3, -2, 2))
+    goal = GoToPoseGoal(Pose2D(-1, 2, 1.5))
 
     client.send_goal(goal)
 
-    #client.wait_for_result()
+    client.wait_for_result()
 
     return
 

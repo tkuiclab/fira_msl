@@ -36,12 +36,18 @@ class MoveInLine:
         np_target = numpy.array([self.target.x, self.target.y])
         np_robot = numpy.array([msg.x, msg.y])
 
-        if (np_target == np_robot).all() and (msg.theta == self.target.theta):
+        if numpy.linalg.norm(np_target - np_robot) < 0.0001 and abs(self.target.theta - msg.theta) < 0.01:
+            self.pub.publish(Twist(Vector3(0, 0, 0), Vector3(0, 0, 0)))
             self._as.set_succeeded()
+            return
 
-        np_vel = np_target - np_robot
-        ang_vel = abs(msg.theta - self.target.theta)
-        self.pub.publish(Twist(Vector3(np_vel[0], np_vel[1], 0), Vector3(0, 0, ang_vel)))
+        np_vector = np_target - np_robot
+        np_norm = np_vector/numpy.linalg.norm(np_vector)
+        np_vel = np_norm * 0.3
+
+        ang_dis = numpy.unwrap(numpy.array([self.target.theta - msg.theta]))
+
+        self.pub.publish(Twist(Vector3(np_vel[0], np_vel[1], 0), Vector3(0, 0, ang_dis[0])))
 
 def main():
     rospy.init_node("move_in_line")
