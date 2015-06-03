@@ -43,8 +43,8 @@ def main():
 
 
     # Run state machine introspection server
-    intro_server = IntrospectionServer('game_state',game_state_sm,'/GAME_STATE')
-    intro_server.start()
+    #intro_server = IntrospectionServer('game_state',game_state_sm,'/GAME_STATE')
+    #intro_server.start()
 
     # Run state machine action server
     sms = ActionServerWrapper(
@@ -58,7 +58,7 @@ def main():
 
     rospy.spin()
 
-    intro_server.stop()
+    #intro_server.stop()
 
 if __name__ == "__main__":
     main()

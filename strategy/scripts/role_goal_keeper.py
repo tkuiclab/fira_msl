@@ -40,7 +40,7 @@ def main():
 
 
     # Run state machine introspection server
-    intro_server = IntrospectionServer('goal_keeper',goal_keeper_sm,'/GOAL_KEEPER')
+    intro_server = IntrospectionServer('goal_keeper',goal_keeper_sm,'/ROLE_SELECTOR/GOAL_KEEPER')
     intro_server.start()
 
     # Run state machine action server

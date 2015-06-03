@@ -1,7 +1,7 @@
 <launch>
-  <node pkg="path_planning" type="move_in_line.py" name="move_in_line"/>
-  <node pkg="strategy" type="bhv_chase_ball.py" name="bhv_chase_ball"/>
-  <node pkg="strategy" type="bhv_search_ball.py" name="bhv_search_ball"/>
+  <node pkg="path_planning" type="move_in_line.py" name="move_in_line" output="screen"/>
+  <node pkg="strategy" type="bhv_chase_ball.py" name="bhv_chase_ball" output="screen"/>
+  <node pkg="strategy" type="bhv_search_ball.py" name="bhv_search_ball" output="screen"/>
   <node pkg="strategy" type="role_goal_keeper.py" name="role_goal_keeper" />
   <node pkg="strategy" type="role_offensive.py" name="role_offensive" />
   <node pkg="strategy" type="role_selector.py" name="role_selector" />

@@ -25,7 +25,7 @@ class RefServer (object):
             if self._as.is_preempt_requested():
                 self._as.set_preempted()
                 break
-            self.pub.publish(Twist(Vector3(0.1, 0.1, 0), Vector3(0, 0, 0.1)))
+            #self.pub.publish(Twist(Vector3(0.1, 0.1, 0), Vector3(0, 0, 0.1)))
             rospy.Rate(10)
 
 def main():

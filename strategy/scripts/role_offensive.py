@@ -38,7 +38,7 @@ def main():
 
 
     # Run state machine introspection server
-    intro_server = IntrospectionServer('offensive',offensive_sm,'/OFFENSIVE')
+    intro_server = IntrospectionServer('offensive',offensive_sm,'/ROLE_SELECTOR/OFFENSIVE')
     intro_server.start()
 
     # Run state machine action server

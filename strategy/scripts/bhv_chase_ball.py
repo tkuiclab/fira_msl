@@ -14,7 +14,7 @@ class RefServer (object):
         self._as.register_preempt_callback(self.preempt_cb)
         self._as.start()
 
-        self.sub = rospy.Subscriber("/world_model/ball_pose", Pose2D, self.found_ball_cb)
+        self.sub_ball_pose = rospy.Subscriber("/world_model/ball_pose", Pose2D, self.found_ball_cb)
 
         self._ac = SimpleActionClient('move_in_line', GoToPoseAction)
         self._ac.wait_for_server()
@@ -22,7 +22,7 @@ class RefServer (object):
         rospy.loginfo("Creating ActionServer [%s]", name)
 
     def goal_cb(self):
-        pass
+        self._as.accept_new_goal()
 
     def preempt_cb(self):
         self._as.set_preempted()
@@ -31,7 +31,7 @@ class RefServer (object):
         if not self._as.is_active():
             return
 
-        self._ac.send_goal(GoToPoseGoal(msg))
+        self._ac.send_goal(GoToPoseGoal(msg, 0.6, True))
 
         if self._ac.get_result():
             self._as.set_succeeded()
