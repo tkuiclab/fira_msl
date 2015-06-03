@@ -9,7 +9,9 @@ import numpy as np
 
 class MoveInLine:
     def __init__(self, name):
-        self.current_goal = None
+        self.target = None
+        self.dis_err = None
+        self.face_dir = None
 
         self._as = SimpleActionServer(name, GoToPoseAction, auto_start=False)
         self._as.register_goal_callback(self.goal_cb)
@@ -22,7 +24,10 @@ class MoveInLine:
         rospy.loginfo("Creating ActionServer [%s]", name)
 
     def goal_cb(self):
-        self.current_goal = self._as.accept_new_goal()
+        self._as.accept_new_goal()
+        self.target = self._as.current_goal.get_goal().pose2d
+        self.dis_err = self._as.current_goal.get_goal().dis_err
+        self.face_dir = self._as.current_goal.get_goal().face_dir
 
     def preempt_cb(self):
         self._as.set_preempted()
@@ -31,12 +36,12 @@ class MoveInLine:
         if not self._as.is_active():
             return
 
-        np_target = np.array([self.current_goal.pose2d.x, self.current_goal.pose2d.y])
-        target_ang = np.arctan2([self.current_goal.pose2d.x], [self.current_goal.pose2d.y])[0] \
-            if self.current_goal.face_dir else self.current_goal.pose2d.theta
+        np_target = np.array([self.target.x, self.target.y])
+        target_ang = np.arctan2([self.target.x], [self.target.y])[0] \
+            if self.face_dir else self.target.theta
         np_robot = np.array([msg.x, msg.y])
 
-        if (np.linalg.norm(np_target - np_robot) > self.current_goal.dis_err):
+        if (np.linalg.norm(np_target - np_robot) > self.dis_err):
             np_vector = np_target - np_robot
             np_norm = np_vector/np.linalg.norm(np_vector)
             np_vel = np_norm * 0.3
