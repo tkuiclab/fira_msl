@@ -53,7 +53,7 @@ def main():
 
 
     # Run state machine introspection server
-    intro_server = IntrospectionServer('role_selector',role_sm,'/ROLE_SELECTOR')
+    intro_server = IntrospectionServer('role_selector_sis',role_sm,'/ROLE_SELECTOR')
     intro_server.start()
 
     # Run state machine action server

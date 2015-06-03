@@ -21,7 +21,7 @@ def main():
 
     # Construct state machine
     offensive_sm = StateMachine(
-            outcomes=['goal','aborted','preempted'])
+            outcomes=['succeeded','aborted','preempted'])
 
     # Set the initial state explicitly
     offensive_sm.set_initial_state(['SEARCH_BALL'])
@@ -33,7 +33,7 @@ def main():
 
         StateMachine.add('CHASE_BALL',
                 SimpleActionState('bhv_chase_ball', TestAction),
-                { 'succeeded':'goal', 'aborted': 'SEARCH_BALL' })
+                { 'succeeded':'succeeded', 'aborted': 'SEARCH_BALL' })
 
 
 
@@ -44,7 +44,7 @@ def main():
     # Run state machine action server
     sms = ActionServerWrapper(
             'role_offensive', TestAction, offensive_sm,
-            succeeded_outcomes = ['goal'],
+            succeeded_outcomes = ['succeeded'],
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
             goal_slots_map = {},

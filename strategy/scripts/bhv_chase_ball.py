@@ -9,6 +9,8 @@ from fira_msl_msgs.msg import *
 class RefServer (object):
 
     def __init__(self, name):
+        self.past_ball = Pose2D()
+
         self._as = SimpleActionServer(name, TestAction, auto_start=False)
         self._as.register_goal_callback(self.goal_cb)
         self._as.register_preempt_callback(self.preempt_cb)
@@ -31,10 +33,12 @@ class RefServer (object):
         if not self._as.is_active():
             return
 
-        self._ac.send_goal(GoToPoseGoal(msg, 0.6, True))
+        if msg.x != self.past_ball.x or msg.y != self.past_ball.y:
+            self.past_ball = msg
+            self._ac.send_goal(GoToPoseGoal(msg, 0.5, True), done_cb=self.done_cb)
 
-        if self._ac.get_result():
-            self._as.set_succeeded()
+    def done_cb(self, state, result):
+        self._as.set_succeeded()
 
 def main():
     rospy.init_node("bhv_chase_ball")

@@ -21,7 +21,7 @@ def main():
 
     # Construct state machine
     goal_keeper_sm = StateMachine(
-            outcomes=['goal','aborted','preempted'],
+            outcomes=['succeeded','aborted','preempted'],
             input_keys = ['input'],
             output_keys = ['output'])
 
@@ -35,7 +35,7 @@ def main():
 
         StateMachine.add('CHASE_BALL',
                 SimpleActionState('chase_ball', TestAction),
-                { 'succeeded':'goal' })
+                { 'succeeded':'succeeded' })
 
 
 
@@ -46,7 +46,7 @@ def main():
     # Run state machine action server
     sms = ActionServerWrapper(
             'goal_keeper', TestAction, goal_keeper_sm,
-            succeeded_outcomes = ['goal'],
+            succeeded_outcomes = ['succeeded'],
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
             goal_slots_map = {},
