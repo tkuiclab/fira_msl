@@ -25,7 +25,7 @@ def main():
 
     # Construct state machine
     role_sm = StateMachine(
-            outcomes=['goal','aborted','preempted'],
+            outcomes=['succeeded','aborted','preempted'],
             input_keys = ['role'])
 
     # Set the initial state explicitly
@@ -43,13 +43,13 @@ def main():
                     'no_role': 'aborted'})
         StateMachine.add('GOAL_KEEPER',
                 SimpleActionState('role_goal_keeper', TestAction),
-                {'succeeded': 'goal'})
+                {'succeeded': 'succeeded'})
         StateMachine.add('OFFENSIVE',
                 SimpleActionState('role_offensive', TestAction),
-                {'succeeded': 'goal'})
+                {'succeeded': 'succeeded'})
         StateMachine.add('DEFENSIVE',
                 SimpleActionState('role_defensive', TestAction),
-                {'succeeded': 'goal'})
+                {'succeeded': 'succeeded'})
 
 
     # Run state machine introspection server
@@ -59,7 +59,7 @@ def main():
     # Run state machine action server
     sms = ActionServerWrapper(
             'role_selector', RoleAction, role_sm,
-            succeeded_outcomes = ['goal'],
+            succeeded_outcomes = ['succeeded'],
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
             goal_slots_map = {'role':'role'},

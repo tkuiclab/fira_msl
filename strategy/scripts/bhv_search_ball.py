@@ -8,7 +8,7 @@ from geometry_msgs.msg import *
 class RefServer (object):
 
     def __init__(self, name):
-        self._as = SimpleActionServer(name, TestAction, self.execute_cb, False)
+        self._as = SimpleActionServer(name, TestAction, execute_cb=self.execute_cb, auto_start=False)
         self.sub = rospy.Subscriber("/world_model/ball_pose", Pose2D, self.found_ball_cb)
         self.pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
         self._as.start()
@@ -21,7 +21,7 @@ class RefServer (object):
         return
 
     def execute_cb(self, goal):
-        while not rospy.is_shutdown():
+        while self._as.is_active():
             if self._as.is_preempt_requested():
                 self._as.set_preempted()
                 break
