@@ -25,6 +25,7 @@ class RefServer (object):
 
     def goal_cb(self):
         self._as.accept_new_goal()
+        self._ac.send_goal(GoToPoseGoal(Pose2D(0, 0, 0), 0.5, True), done_cb=self.done_cb)
 
     def preempt_cb(self):
         self._as.set_preempted()
@@ -33,9 +34,9 @@ class RefServer (object):
         if not self._as.is_active():
             return
 
-        if msg.x != self.past_ball.x or msg.y != self.past_ball.y:
-            self.past_ball = msg
-            self._ac.send_goal(GoToPoseGoal(msg, 0.5, True), done_cb=self.done_cb)
+        #if msg.x != self.past_ball.x or msg.y != self.past_ball.y:
+        #    self.past_ball = msg
+        #    self._ac.send_goal(GoToPoseGoal(msg, 0.5, True), done_cb=self.done_cb)
 
     def done_cb(self, state, result):
         self._as.set_succeeded()

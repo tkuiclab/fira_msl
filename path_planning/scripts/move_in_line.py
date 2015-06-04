@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import rospy
+import tf
+import math
 
 from actionlib import *
 from geometry_msgs.msg import *
@@ -9,57 +11,47 @@ import numpy as np
 
 class MoveInLine:
     def __init__(self, name):
-        self.target = None
-        self.dis_err = None
-        self.face_dir = None
-
-        self._as = SimpleActionServer(name, GoToPoseAction, auto_start=False)
-        self._as.register_goal_callback(self.goal_cb)
-        self._as.register_preempt_callback(self.preempt_cb)
+        self._as = SimpleActionServer(name, GoToPoseAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
 
-        self.sub = rospy.Subscriber("/robot_pose", Pose2D, self.go_to_cb)
+        self.tf_listener = tf.TransformListener()
         self.pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
 
         rospy.loginfo("Creating ActionServer [%s]", name)
 
-    def goal_cb(self):
-        self._as.accept_new_goal()
-        self.target = self._as.current_goal.get_goal().pose2d
-        self.dis_err = self._as.current_goal.get_goal().dis_err
-        self.face_dir = self._as.current_goal.get_goal().face_dir
+    def execute_cb(self, goal):
+        rate = rospy.Rate(10.0)
+        while True:
+            if self._as.is_preempt_requested():
+                self._as.set_preempted()
+                break
 
-    def preempt_cb(self):
-        self._as.set_preempted()
+            try:
+                now = rospy.Time.now()
+                self.tf_listener.waitForTransform('/self_frame', '/ball_frame', now, rospy.Duration(4.0))
+                (trans, rot) = self.tf_listener.lookupTransform('/self_frame', '/ball_frame', now)
+            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+                continue
 
-    def go_to_cb(self, msg):
-        if not self._as.is_active():
-            return
+            if np.linalg.norm(np.array([trans[0], trans[1]])) < 0.3:
+                linear = Vector3(0.0, 0.0, 0.0)
+            else:
+                linear = Vector3(trans[0], trans[1], 0)
 
-        np_target = np.array([self.target.x, self.target.y])
-        target_ang = np.arctan2([self.target.x], [self.target.y])[0] \
-            if self.face_dir else self.target.theta
-        np_robot = np.array([msg.x, msg.y])
+            angular = math.atan2(trans[1], trans[0])
 
-        if (np.linalg.norm(np_target - np_robot) > self.dis_err):
-            np_vector = np_target - np_robot
-            np_norm = np_vector/np.linalg.norm(np_vector)
-            np_vel = np_norm * 0.3
-        else:
-            np_vel = [0, 0]
+            if abs(angular) < 0.2:
+                angular = 0.0
+            else:
+                angular = 1.5 if angular > 0 else -1.5
 
-        if (abs(target_ang - msg.theta) > 0.1):
-            ang_vel = 0.2
-            ang_vel = ang_vel if (target_ang - msg.theta > 0) else -ang_vel
-        else:
-            ang_vel = 0.0
+            self.pub.publish(Twist(linear, Vector3(0, 0, angular)))
 
-        if np.linalg.norm(np_vel) == 0 and ang_vel == 0:
-            self.pub.publish(Twist(Vector3(0, 0, 0), Vector3(0, 0, 0)))
-            self._as.set_succeeded()
-            return
+            if linear.x == 0.0 and linear.y == 0.0 and angular == 0.0:
+                self._as.set_succeeded()
+                break
 
-        self.pub.publish(Twist(Vector3(np_vel[0], np_vel[1], 0), Vector3(0, 0, ang_vel)))
+            rate.sleep()
 
 
 def main():

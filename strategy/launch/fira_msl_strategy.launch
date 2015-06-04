@@ -1,4 +1,6 @@
 <launch>
+  <include file="$(find world_model)/launch/tf_broadcasters.launch" />
+
   <node pkg="path_planning" type="move_in_line.py" name="move_in_line" output="screen"/>
   <node pkg="strategy" type="bhv_chase_ball.py" name="bhv_chase_ball" output="screen"/>
   <node pkg="strategy" type="bhv_search_ball.py" name="bhv_search_ball" output="screen"/>
