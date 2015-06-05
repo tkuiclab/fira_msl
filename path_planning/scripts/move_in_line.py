@@ -9,6 +9,16 @@ from fira_msl_msgs.msg import *
 
 import numpy as np
 
+SPD_MAX = 1.0
+SPD_MIN = 0.1
+DIS_MAX = 1.0
+DIS_MIN = 0.1
+
+W_MAX = 1.57
+W_MIN = 0.5
+ANG_MAX = 3.0
+ANG_MIN = 0.2
+
 class MoveInLine:
     def __init__(self, name):
         self._as = SimpleActionServer(name, GoToPoseAction, execute_cb=self.execute_cb, auto_start=False)
@@ -45,7 +55,13 @@ class MoveInLine:
             if abs(angular) < 0.1:
                 angular = 0.0
             else:
-                angular = 1.5 if angular > 0 else -1.5
+                if abs(angular) > W_MAX:
+                    angular = ANG_MAX
+                elif abs(angular) < W_MIN:
+                    angular = ANG_MIN
+                else:
+                    angular = (ANG_MAX - ANG_MIN)*((math.cos(math.pi*((angular-W_MIN)/(W_MAX-W_MIN)-1))+1)/2)+ANG_MIN
+                angular = angular if angular > 0 else -angular
 
             self.pub.publish(Twist(linear, Vector3(0, 0, angular)))
 
