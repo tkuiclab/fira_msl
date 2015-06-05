@@ -15,13 +15,13 @@ DIS_MAX = 1.0
 DIS_MIN = 0.1
 
 W_MAX = 1.57
-W_MIN = 0.5
+W_MIN = 0.1
 ANG_MAX = 3.0
-ANG_MIN = 0.2
+ANG_MIN = 0.05
 
 class MoveInLine:
     def __init__(self, name):
-        self._as = SimpleActionServer(name, GoToPoseAction, execute_cb=self.execute_cb, auto_start=False)
+        self._as = SimpleActionServer(name, MovingByPoseAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
 
         self.tf_listener = tf.TransformListener()
@@ -38,21 +38,20 @@ class MoveInLine:
 
             try:
                 now = rospy.Time.now()
-                self.tf_listener.waitForTransform('/self_frame', '/ball_frame', now, rospy.Duration(4.0))
-                #(trans, rot) = self.tf_listener.lookupTransform('/self_frame', '/ball_frame', now)
+                self.tf_listener.waitForTransform('/self_frame', goal.frame_name, now, rospy.Duration(4.0))
                 target = self.tf_listener.transformPoint('/self_frame',
-                        PointStamped(Header(0, now, '/ball_frame'), Point(0.0, 0.0, 0.0)))
+                        PointStamped(Header(0, now, goal.frame_name), Point(goal.pose2d.x, goal.pose2d.y, 0.0)))
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 continue
 
-            if np.linalg.norm(np.array([target.point.x, target.point.y])) < 0.3:
+            if np.linalg.norm([target.point.x, target.point.y]) < goal.dis_err:
                 linear = Vector3(0.0, 0.0, 0.0)
             else:
                 linear = Vector3(target.point.x, target.point.y, 0)
 
-            angular = math.atan2(target.point.y, target.point.x)
+            angular = math.atan2(target.point.y, target.point.x) + goal.pose2d.theta
 
-            if abs(angular) < 0.1:
+            if abs(angular) < 0.01:
                 angular = 0.0
             else:
                 if abs(angular) > W_MAX:

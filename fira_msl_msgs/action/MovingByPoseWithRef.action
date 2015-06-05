@@ -1,0 +1,7 @@
+string frame
+geometry_msgs/Pose2D pose2d
+string ref_frame
+geometry_msgs/Pose2D ref_pose2d
+float32 dis_err
+---
+---
