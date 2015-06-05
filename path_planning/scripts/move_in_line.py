@@ -29,18 +29,20 @@ class MoveInLine:
             try:
                 now = rospy.Time.now()
                 self.tf_listener.waitForTransform('/self_frame', '/ball_frame', now, rospy.Duration(4.0))
-                (trans, rot) = self.tf_listener.lookupTransform('/self_frame', '/ball_frame', now)
+                #(trans, rot) = self.tf_listener.lookupTransform('/self_frame', '/ball_frame', now)
+                target = self.tf_listener.transformPoint('/self_frame',
+                        PointStamped(Header(0, now, '/ball_frame'), Point(0.0, 0.0, 0.0)))
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 continue
 
-            if np.linalg.norm(np.array([trans[0], trans[1]])) < 0.3:
+            if np.linalg.norm(np.array([target.point.x, target.point.y])) < 0.3:
                 linear = Vector3(0.0, 0.0, 0.0)
             else:
-                linear = Vector3(trans[0], trans[1], 0)
+                linear = Vector3(target.point.x, target.point.y, 0)
 
-            angular = math.atan2(trans[1], trans[0])
+            angular = math.atan2(target.point.y, target.point.x)
 
-            if abs(angular) < 0.2:
+            if abs(angular) < 0.1:
                 angular = 0.0
             else:
                 angular = 1.5 if angular > 0 else -1.5
