@@ -19,13 +19,13 @@ W_MIN = 0.1
 ANG_MAX = 3.0
 ANG_MIN = 0.05
 
-class MoveInLine:
+class RefServer:
     def __init__(self, name):
         self._as = SimpleActionServer(name, MovingByPoseAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
 
         self.tf_listener = tf.TransformListener()
-        self.pub = rospy.Publisher("/fira_msl1/cmd_vel", Twist, queue_size=1)
+        self.pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
 
         rospy.loginfo("Creating ActionServer [%s]", name)
 
@@ -38,9 +38,13 @@ class MoveInLine:
 
             try:
                 now = rospy.Time.now()
-                self.tf_listener.waitForTransform('/fira_msl1', goal.frame_name, now, rospy.Duration(4.0))
-                target = self.tf_listener.transformPoint('/fira_msl1',
+                #self.tf_listener.waitForTransform('/self_frame', goal.frame_name, now, rospy.Duration(4.0))
+                #target = self.tf_listener.transformPoint('/self_frame',
+                #        PointStamped(Header(0, now, goal.frame_name), Point(goal.pose2d.x, goal.pose2d.y, 0.0)))
+                self.tf_listener.waitForTransform('/self_frame', goal.frame_name, now, rospy.Duration(4.0))
+                target = self.tf_listener.transformPoint('/self_frame',
                         PointStamped(Header(0, now, goal.frame_name), Point(goal.pose2d.x, goal.pose2d.y, 0.0)))
+
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 continue
 
@@ -72,8 +76,8 @@ class MoveInLine:
 
 
 def main():
-    rospy.init_node("move_in_line")
-    MoveInLine(rospy.get_name())
+    rospy.init_node("move_with_ref")
+    RefServer(rospy.get_name())
     rospy.spin()
 
 if __name__ == "__main__":

@@ -9,8 +9,6 @@ from fira_msl_msgs.msg import *
 class RefServer (object):
 
     def __init__(self, name):
-        self.past_ball = Pose2D()
-
         self._as = SimpleActionServer(name, TestAction, auto_start=False)
         self._as.register_goal_callback(self.goal_cb)
         self._as.register_preempt_callback(self.preempt_cb)
@@ -31,10 +29,6 @@ class RefServer (object):
     def found_ball_cb(self, msg):
         if not self._as.is_active():
             return
-
-        #if msg.x != self.past_ball.x or msg.y != self.past_ball.y:
-        #    self.past_ball = msg
-        #    self._ac.send_goal(GoToPoseGoal(msg, 0.5, True), done_cb=self.done_cb)
 
     def done_cb(self, state, result):
         self._as.set_succeeded()

@@ -14,7 +14,7 @@ def handle_ball_pose(msg, name):
 
 if __name__ == '__main__':
     rospy.init_node('ball_tf_broadcaster')
-    rospy.Subscriber('/world_model/ball_pose',
+    rospy.Subscriber('/soccer/pose',
                      Pose2D,
                      handle_ball_pose,
                      'ball_frame')

@@ -9,8 +9,8 @@ class RefServer (object):
 
     def __init__(self, name):
         self._as = SimpleActionServer(name, TestAction, execute_cb=self.execute_cb, auto_start=False)
-        self.sub = rospy.Subscriber("/world_model/ball_pose", Pose2D, self.found_ball_cb)
-        self.pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
+        self.sub = rospy.Subscriber("/soccer/pose", Pose2D, self.found_ball_cb)
+        #self.pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
         self._as.start()
         rospy.loginfo("Creating ActionServer [%s]", name)
 

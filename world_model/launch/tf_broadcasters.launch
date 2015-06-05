@@ -1,6 +1,6 @@
 <launch>
     <node name="robot_tf_broadcaster" pkg="world_model" type="robot_tf_broadcaster.py" respawn="false" output="screen" >
-      <param name="robot_name" type="string" value="self_frame" />
+      <param name="robot_name" type="string" value="fira_msl1" />
     </node>
     <node name="ball_tf_broadcaster" pkg="world_model" type="ball_tf_broadcaster.py" respawn="false" output="screen" />
 </launch>

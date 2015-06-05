@@ -15,7 +15,7 @@ def handle_robot_pose(msg, name):
 if __name__ == '__main__':
     rospy.init_node('robot_tf_broadcaster')
     robot_name = rospy.get_param('~robot_name')
-    rospy.Subscriber('/robot_pose',
+    rospy.Subscriber('/%s/pose'%robot_name,
                      Pose2D,
                      handle_robot_pose,
                      robot_name)
