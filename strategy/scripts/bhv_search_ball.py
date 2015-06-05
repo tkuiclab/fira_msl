@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import tf
+import tf2_ros
 
 from actionlib import *
 from actionlib.msg import TestAction
@@ -9,7 +10,8 @@ from geometry_msgs.msg import *
 class RefServer (object):
 
     def __init__(self, name):
-        self.tf_lisener = tf.TransformListener()
+        self.tf_buff = tf2_ros.Buffer()
+        self.tf_lisener = tf2_ros.TransformListener(self.tf_buff)
         self._as = SimpleActionServer(name, TestAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
         rospy.loginfo("Creating ActionServer [%s]", name)
@@ -21,7 +23,7 @@ class RefServer (object):
                 self._as.set_preempted()
                 break
 
-            if self.tf_lisener.canTransform('/fira_msl1', 'ball_frame', rospy.Time.now()):
+            if self.tf_buff.can_transform('fira_msl1', 'ball_frame', rospy.Time.now()):
                 self._as.set_succeeded()
                 break
 

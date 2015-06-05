@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import rospy
 import tf
+import tf2_ros
+import tf2_geometry_msgs
 import math
 
 from actionlib import *
@@ -24,7 +26,8 @@ class MoveInLine:
         self._as = SimpleActionServer(name, MovingByPoseAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
 
-        self.tf_listener = tf.TransformListener()
+        self.tf_buff = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buff)
         self.pub = rospy.Publisher("/fira_msl1/cmd_vel", Twist, queue_size=1)
 
         rospy.loginfo("Creating ActionServer [%s]", name)
@@ -37,11 +40,11 @@ class MoveInLine:
                 break
 
             try:
-                now = rospy.Time.now()
-                self.tf_listener.waitForTransform('/fira_msl1', goal.frame_name, now, rospy.Duration(4.0))
-                target = self.tf_listener.transformPoint('/fira_msl1',
-                        PointStamped(Header(0, now, goal.frame_name), Point(goal.pose2d.x, goal.pose2d.y, 0.0)))
-            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+                target = self.tf_buff.transform(
+                        PointStamped(Header(None, rospy.Time(), goal.frame), Point(goal.pose2d.x, goal.pose2d.y, 0.0)),
+                        'fira_msl1')
+            except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+                rate.sleep()
                 continue
 
             if np.linalg.norm([target.point.x, target.point.y]) < goal.dis_err:

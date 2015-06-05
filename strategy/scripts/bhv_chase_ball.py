@@ -21,7 +21,7 @@ class RefServer (object):
 
     def goal_cb(self):
         self._as.accept_new_goal()
-        self._ac.send_goal(MovingByPoseGoal('/ball_frame', Pose2D(0, 0, 0), 0.3), done_cb=self.done_cb)
+        self._ac.send_goal(MovingByPoseGoal('ball_frame', Pose2D(0, 0, 0), 0.3), done_cb=self.done_cb)
 
     def preempt_cb(self):
         self._as.set_preempted()
