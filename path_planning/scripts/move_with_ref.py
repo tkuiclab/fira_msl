@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import rospy
-import tf
+import tf.transformations as tf_trans
+import tf2_ros
+import tf2_geometry_msgs
 import math
 
 from actionlib import *
@@ -21,11 +23,12 @@ ANG_MIN = 0.05
 
 class RefServer:
     def __init__(self, name):
-        self._as = SimpleActionServer(name, MovingByPoseAction, execute_cb=self.execute_cb, auto_start=False)
+        self._as = SimpleActionServer(name, MovingByPoseWithRefAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
 
-        self.tf_listener = tf.TransformListener()
-        self.pub = rospy.Publisher("/cmd_vel", Twist, queue_size=1)
+        self.tf_buff = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buff)
+        self.pub = rospy.Publisher("/fira_msl1/cmd_vel", Twist, queue_size=1)
 
         rospy.loginfo("Creating ActionServer [%s]", name)
 
@@ -37,34 +40,49 @@ class RefServer:
                 break
 
             try:
-                now = rospy.Time.now()
-                #self.tf_listener.waitForTransform('/self_frame', goal.frame_name, now, rospy.Duration(4.0))
-                #target = self.tf_listener.transformPoint('/self_frame',
-                #        PointStamped(Header(0, now, goal.frame_name), Point(goal.pose2d.x, goal.pose2d.y, 0.0)))
-                self.tf_listener.waitForTransform('/self_frame', goal.frame_name, now, rospy.Duration(4.0))
-                target = self.tf_listener.transformPoint('/self_frame',
-                        PointStamped(Header(0, now, goal.frame_name), Point(goal.pose2d.x, goal.pose2d.y, 0.0)))
-
-            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+                target = self.tf_buff.transform(
+                        PointStamped(Header(None, rospy.Time(), goal.frame), Point(goal.pose2d.x, goal.pose2d.y, 0.0)),
+                        'fira_msl1')
+                ref_target = self.tf_buff.transform(
+                        PointStamped(Header(None, rospy.Time(), goal.ref_frame), Point(goal.pose2d.x, goal.pose2d.y, 0.0)),
+                        'fira_msl1')
+            except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+                rate.sleep()
                 continue
 
-            if np.linalg.norm([target.point.x, target.point.y]) < goal.dis_err:
+            target_dis = np.linalg.norm(np.linalg.norm([target.point.x, target.point.y]))
+            rotate_ang = math.tan(goal.dis_err/target_dis)
+            vel = np.array([
+                    target.point.x*math.cos(rotate_ang) - target.point.y*math.sin(rotate_ang),
+                    target.point.x*math.sin(rotate_ang) + target.point.y*math.cos(rotate_ang)])
+
+            vel_unit = vel/np.linalg.norm(vel)
+
+            ref_angle = math.atan2(ref_target.point.y, ref_target.point.x)
+            if abs(ref_angle) < 0.1:
                 linear = Vector3(0.0, 0.0, 0.0)
             else:
-                linear = Vector3(target.point.x, target.point.y, 0)
+                if target_dis - goal.dis_err > DIS_MAX:
+                    spd = SPD_MAX
+                elif target_dis - goal.dis_err < DIS_MIN:
+                    spd = SPD_MIN
+                else:
+                    spd = (SPD_MAX-SPD_MIN)*((math.cos(math.pi*((target_dis-goal.dis_err-DIS_MIN)/(DIS_MAX-DIS_MIN)-1))+1)/2)+SPD_MIN
+                vel = vel_unit*spd
+                linear = Vector3(vel[0], vel[1], 0)
 
-            angular = math.atan2(target.point.y, target.point.x) + goal.pose2d.theta
+            angle = math.atan2(target.point.y, target.point.x)
 
-            if abs(angular) < 0.01:
+            if abs(angle) < 0.01:
                 angular = 0.0
             else:
-                if abs(angular) > W_MAX:
+                if abs(angle) > W_MAX:
                     angular = ANG_MAX
-                elif abs(angular) < W_MIN:
+                elif abs(angle) < W_MIN:
                     angular = ANG_MIN
                 else:
-                    angular = (ANG_MAX - ANG_MIN)*((math.cos(math.pi*((angular-W_MIN)/(W_MAX-W_MIN)-1))+1)/2)+ANG_MIN
-                angular = angular if angular > 0 else -angular
+                    angular = (ANG_MAX - ANG_MIN)*((math.cos(math.pi*((angle-W_MIN)/(W_MAX-W_MIN)-1))+1)/2)+ANG_MIN
+                angular = angular if angle > 0 else -angular
 
             self.pub.publish(Twist(linear, Vector3(0, 0, angular)))
 

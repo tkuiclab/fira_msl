@@ -8,11 +8,11 @@ from fira_msl_msgs.msg import *
 
 def test_client():
 
-    client = SimpleActionClient('move_in_line', GoToPoseAction)
+    client = SimpleActionClient('move_with_ref', MovingByPoseWithRefAction)
 
     client.wait_for_server()
 
-    goal = GoToPoseGoal(Pose2D(-1, 2, 1.5))
+    goal = MovingByPoseWithRefGoal('ball_frame', Pose2D(0, 0, 0), 'BlueGoal', Pose2D(0, 0, 0), 0.3)
 
     client.send_goal(goal)
 
