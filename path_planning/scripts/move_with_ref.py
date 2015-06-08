@@ -11,15 +11,17 @@ from fira_msl_msgs.msg import *
 
 import numpy as np
 
+import speed_control as sc
+
 SPD_MAX = 1.0
 SPD_MIN = 0.1
 DIS_MAX = 1.0
 DIS_MIN = 0.1
 
-W_MAX = 1.57
+W_MAX = math.pi*2
 W_MIN = 0.1
-ANG_MAX = 3.0
-ANG_MIN = 0.05
+ANG_MAX = math.pi/2
+ANG_MIN = 0.005
 
 class RefServer:
     def __init__(self, name):
@@ -50,7 +52,7 @@ class RefServer:
                 rate.sleep()
                 continue
 
-            target_dis = np.linalg.norm(np.linalg.norm([target.point.x, target.point.y]))
+            target_dis = np.linalg.norm([target.point.x, target.point.y])
             rotate_ang = math.tan(goal.dis_err/target_dis)
             vel = np.array([
                     target.point.x*math.cos(rotate_ang) - target.point.y*math.sin(rotate_ang),
@@ -62,13 +64,7 @@ class RefServer:
             if abs(ref_angle) < 0.1:
                 linear = Vector3(0.0, 0.0, 0.0)
             else:
-                if target_dis - goal.dis_err > DIS_MAX:
-                    spd = SPD_MAX
-                elif target_dis - goal.dis_err < DIS_MIN:
-                    spd = SPD_MIN
-                else:
-                    spd = (SPD_MAX-SPD_MIN)*((math.cos(math.pi*((target_dis-goal.dis_err-DIS_MIN)/(DIS_MAX-DIS_MIN)-1))+1)/2)+SPD_MIN
-                vel = vel_unit*spd
+                vel = vel_unit*sc.s_func(DIS_MAX, DIS_MIN, SPD_MAX, SPD_MIN, target_dis - goal.dis_err)
                 linear = Vector3(vel[0], vel[1], 0)
 
             angle = math.atan2(target.point.y, target.point.x)
@@ -76,17 +72,12 @@ class RefServer:
             if abs(angle) < 0.01:
                 angular = 0.0
             else:
-                if abs(angle) > W_MAX:
-                    angular = ANG_MAX
-                elif abs(angle) < W_MIN:
-                    angular = ANG_MIN
-                else:
-                    angular = (ANG_MAX - ANG_MIN)*((math.cos(math.pi*((angle-W_MIN)/(W_MAX-W_MIN)-1))+1)/2)+ANG_MIN
+                angular = sc.s_func(ANG_MAX, ANG_MIN, W_MAX, W_MIN, abs(angle))
                 angular = angular if angle > 0 else -angular
 
             self.pub.publish(Twist(linear, Vector3(0, 0, angular)))
 
-            if linear.x == 0.0 and linear.y == 0.0 and angular == 0.0:
+            if np.linalg.norm(vel) == 0.0 and angular == 0.0:
                 self._as.set_succeeded()
                 break
 

@@ -11,15 +11,17 @@ from fira_msl_msgs.msg import *
 
 import numpy as np
 
+import speed_control as sc
+
 SPD_MAX = 1.0
 SPD_MIN = 0.1
 DIS_MAX = 1.0
 DIS_MIN = 0.1
 
-W_MAX = 1.57
+W_MAX = math.pi*2
 W_MIN = 0.1
-ANG_MAX = 3.0
-ANG_MIN = 0.05
+ANG_MAX = math.pi/2
+ANG_MIN = 0.005
 
 class MoveInLine:
     def __init__(self, name):
@@ -47,22 +49,20 @@ class MoveInLine:
                 rate.sleep()
                 continue
 
+            target_dis = np.linalg.norm([target.point.x, target.point.y])
+            vel_unit = [target.point.x, target.point.y]/target_dis
             if np.linalg.norm([target.point.x, target.point.y]) < goal.dis_err:
                 linear = Vector3(0.0, 0.0, 0.0)
             else:
-                linear = Vector3(target.point.x, target.point.y, 0)
+                vel = vel_unit*sc.s_func(DIS_MAX, DIS_MIN, SPD_MAX, SPD_MIN, target_dis)
+                linear = Vector3(vel[0], vel[1], 0)
 
             angular = math.atan2(target.point.y, target.point.x) + goal.pose2d.theta
 
             if abs(angular) < 0.01:
                 angular = 0.0
             else:
-                if abs(angular) > W_MAX:
-                    angular = ANG_MAX
-                elif abs(angular) < W_MIN:
-                    angular = ANG_MIN
-                else:
-                    angular = (ANG_MAX - ANG_MIN)*((math.cos(math.pi*((angular-W_MIN)/(W_MAX-W_MIN)-1))+1)/2)+ANG_MIN
+                angular = sc.s_func(ANG_MAX, ANG_MIN, W_MAX, W_MIN, abs(angle))
                 angular = angular if angular > 0 else -angular
 
             self.pub.publish(Twist(linear, Vector3(0, 0, angular)))
