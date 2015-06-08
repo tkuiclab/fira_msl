@@ -21,7 +21,7 @@ DIS_MIN = 0.1
 W_MAX = math.pi*2
 W_MIN = 0.1
 ANG_MAX = math.pi/2
-ANG_MIN = 0.005
+ANG_MIN = 0.05
 
 class MoveInLine:
     def __init__(self, name):
@@ -35,7 +35,7 @@ class MoveInLine:
         rospy.loginfo("Creating ActionServer [%s]", name)
 
     def execute_cb(self, goal):
-        rate = rospy.Rate(10.0)
+        rate = rospy.Rate(100.0)
         while True:
             if self._as.is_preempt_requested():
                 self._as.set_preempted()

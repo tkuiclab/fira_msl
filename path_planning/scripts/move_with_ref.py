@@ -14,14 +14,14 @@ import numpy as np
 import speed_control as sc
 
 SPD_MAX = 1.0
-SPD_MIN = 0.1
+SPD_MIN = 0.5
 DIS_MAX = 1.0
 DIS_MIN = 0.1
 
 W_MAX = math.pi*2
-W_MIN = 0.2
+W_MIN = 0.1
 ANG_MAX = math.pi/2
-ANG_MIN = 0.1
+ANG_MIN = 0.02
 
 class RefServer:
     def __init__(self, name):
@@ -35,7 +35,7 @@ class RefServer:
         rospy.loginfo("Creating ActionServer [%s]", name)
 
     def execute_cb(self, goal):
-        rate = rospy.Rate(10.0)
+        rate = rospy.Rate(100.0)
         while True:
             if self._as.is_preempt_requested():
                 self._as.set_preempted()
@@ -61,7 +61,7 @@ class RefServer:
             vel_unit = vel/np.linalg.norm(vel)
 
             ref_angle = math.atan2(ref_target.point.y, ref_target.point.x)
-            if abs(ref_angle) < 0.2:
+            if abs(ref_angle) < 0.5:
                 vel = [0.0, 0.0]
             else:
                 vel = vel_unit*sc.s_func(DIS_MAX, DIS_MIN, SPD_MAX, SPD_MIN, target_dis - goal.dis_err)
@@ -78,7 +78,6 @@ class RefServer:
             self.pub.publish(Twist(linear, Vector3(0, 0, angular)))
 
             if np.linalg.norm(vel) == 0.0 and angular == 0.0:
-                rospy.loginfo('Succeeded')
                 self._as.set_succeeded()
                 break
 

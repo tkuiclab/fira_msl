@@ -14,7 +14,6 @@ class RefServer (object):
         self._as.register_preempt_callback(self.preempt_cb)
         self._as.start()
 
-        #self._ac = SimpleActionClient('move_in_line', MovingByPoseAction)
         self._ac = SimpleActionClient('move_with_ref', MovingByPoseWithRefAction)
         self._ac.wait_for_server()
 
