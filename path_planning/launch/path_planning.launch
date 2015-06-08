@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="path_planning" type="move_in_line.py" name="move_in_line" output="screen"/>
+  <node pkg="path_planning" type="move_with_ref.py" name="move_with_ref" output="screen"/>
+</launch>
+

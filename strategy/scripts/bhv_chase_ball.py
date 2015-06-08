@@ -14,14 +14,15 @@ class RefServer (object):
         self._as.register_preempt_callback(self.preempt_cb)
         self._as.start()
 
-        self._ac = SimpleActionClient('move_in_line', MovingByPoseAction)
+        #self._ac = SimpleActionClient('move_in_line', MovingByPoseAction)
+        self._ac = SimpleActionClient('move_with_ref', MovingByPoseWithRefAction)
         self._ac.wait_for_server()
 
         rospy.loginfo("Creating ActionServer [%s]", name)
 
     def goal_cb(self):
         self._as.accept_new_goal()
-        self._ac.send_goal(MovingByPoseGoal('ball_frame', Pose2D(0, 0, 0), 0.3), done_cb=self.done_cb)
+        self._ac.send_goal(MovingByPoseWithRefGoal('ball_frame', Pose2D(0, 0, 0), 'BlueGoal', Pose2D(0, 0, 0), 0.3), done_cb=self.done_cb)
 
     def preempt_cb(self):
         self._as.set_preempted()

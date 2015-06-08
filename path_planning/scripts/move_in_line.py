@@ -52,14 +52,14 @@ class MoveInLine:
             target_dis = np.linalg.norm([target.point.x, target.point.y])
             vel_unit = [target.point.x, target.point.y]/target_dis
             if np.linalg.norm([target.point.x, target.point.y]) < goal.dis_err:
-                linear = Vector3(0.0, 0.0, 0.0)
+                vel = [0.0, 0.0]
             else:
                 vel = vel_unit*sc.s_func(DIS_MAX, DIS_MIN, SPD_MAX, SPD_MIN, target_dis)
-                linear = Vector3(vel[0], vel[1], 0)
+            linear = Vector3(vel[0], vel[1], 0)
 
-            angular = math.atan2(target.point.y, target.point.x) + goal.pose2d.theta
+            angle = math.atan2(target.point.y, target.point.x) + goal.pose2d.theta
 
-            if abs(angular) < 0.01:
+            if abs(angle) < 0.01:
                 angular = 0.0
             else:
                 angular = sc.s_func(ANG_MAX, ANG_MIN, W_MAX, W_MIN, abs(angle))

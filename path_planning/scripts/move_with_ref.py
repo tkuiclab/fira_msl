@@ -19,9 +19,9 @@ DIS_MAX = 1.0
 DIS_MIN = 0.1
 
 W_MAX = math.pi*2
-W_MIN = 0.1
+W_MIN = 0.2
 ANG_MAX = math.pi/2
-ANG_MIN = 0.005
+ANG_MIN = 0.1
 
 class RefServer:
     def __init__(self, name):
@@ -61,11 +61,11 @@ class RefServer:
             vel_unit = vel/np.linalg.norm(vel)
 
             ref_angle = math.atan2(ref_target.point.y, ref_target.point.x)
-            if abs(ref_angle) < 0.1:
-                linear = Vector3(0.0, 0.0, 0.0)
+            if abs(ref_angle) < 0.2:
+                vel = [0.0, 0.0]
             else:
                 vel = vel_unit*sc.s_func(DIS_MAX, DIS_MIN, SPD_MAX, SPD_MIN, target_dis - goal.dis_err)
-                linear = Vector3(vel[0], vel[1], 0)
+            linear = Vector3(vel[0], vel[1], 0)
 
             angle = math.atan2(target.point.y, target.point.x)
 
@@ -78,6 +78,7 @@ class RefServer:
             self.pub.publish(Twist(linear, Vector3(0, 0, angular)))
 
             if np.linalg.norm(vel) == 0.0 and angular == 0.0:
+                rospy.loginfo('Succeeded')
                 self._as.set_succeeded()
                 break
 

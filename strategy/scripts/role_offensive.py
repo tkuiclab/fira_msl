@@ -33,8 +33,11 @@ def main():
 
         StateMachine.add('CHASE_BALL',
                 SimpleActionState('bhv_chase_ball', TestAction),
-                { 'succeeded':'succeeded', 'aborted': 'SEARCH_BALL' })
+                { 'succeeded':'DASH', 'aborted': 'SEARCH_BALL' })
 
+        StateMachine.add('DASH',
+                SimpleActionState('bhv_dash', TestAction),
+                { 'succeeded':'succeeded', 'aborted': 'SEARCH_BALL' })
 
 
     # Run state machine introspection server

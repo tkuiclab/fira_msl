@@ -1,83 +1,42 @@
+#!/usr/bin/env python
 import rospy
 
-import sys
+from actionlib import *
+from actionlib.msg import TestAction
+from geometry_msgs.msg import *
+from fira_msl_msgs.msg import *
 
-from actionlib.action_server import ActionServer
-from actionlib.msg import TestAction,TestFeedback,TestResult
+class RefServer (object):
 
-class RefServer (ActionServer):
+    def __init__(self, name):
+        self._as = SimpleActionServer(name, TestAction, auto_start=False)
+        self._as.register_goal_callback(self.goal_cb)
+        self._as.register_preempt_callback(self.preempt_cb)
+        self._as.start()
 
-    def __init__(self,name):
-        action_spec=TestAction
-        ActionServer.__init__(self,name,action_spec,self.goalCallback,self.cancelCallback, False);
-        self.start()
-        rospy.loginfo("Creating ActionServer [%s]\n", name);
+        self._ac = SimpleActionClient('move_in_line', MovingByPoseAction)
+        self._ac.wait_for_server()
 
-        self.saved_goals=[]
+        rospy.loginfo("Creating ActionServer [%s]", name)
 
-    def goalCallback(self,gh):
-        goal = gh.get_goal();
+    def goal_cb(self):
+        self._as.accept_new_goal()
+        self._ac.send_goal(MovingByPoseGoal('BlueGoal', Pose2D(0, 0, 0), 0.3), done_cb=self.done_cb)
 
-        rospy.loginfo("Got goal %d", int(goal.goal))
-        if goal.goal == 1:
-            gh.set_accepted();
-            gh.set_succeeded(None, "The ref server has succeeded");
-        elif goal.goal == 2:
-            gh.set_accepted();
-            gh.set_aborted(None, "The ref server has aborted");
-        elif goal.goal == 3:
-            gh.set_rejected(None, "The ref server has rejected");
+    def preempt_cb(self):
+        self._as.set_preempted()
 
+    def found_ball_cb(self, msg):
+        if not self._as.is_active():
+            return
 
-        elif goal.goal == 4:
+    def done_cb(self, state, result):
+        self._as.set_succeeded()
 
-            self.saved_goals.append(gh);
-            gh.set_accepted();
+def main():
+    rospy.init_node("bhv_dash")
+    RefServer(rospy.get_name())
+    rospy.spin()
 
-        elif goal.goal == 5:
-
-            gh.set_accepted();
-            for g in self.saved_goals:
-                g.set_succeeded();
-            self.saved_goals = [];
-            gh.set_succeeded();
-
-
-        elif goal.goal == 6:
-            gh.set_accepted();
-            for g in self.saved_goals:
-                g.set_aborted();
-            self.saved_goals = [];
-            gh.set_succeeded();
-
-        elif goal.goal == 7:
-            gh.set_accepted();
-            n=len(self.saved_goals);
-            for i,g in enumerate(self.saved_goals):
-                g.publish_feedback(TestFeedback(n-i));
-
-            gh.set_succeeded();
-
-        elif goal.goal == 8:
-            gh.set_accepted();
-            n=len(self.saved_goals);
-            for i,g in enumerate(self.saved_goals):
-                if i % 2 ==0:
-                    g.set_succeeded(TestResult(n-i), "The ref server has succeeded");
-                else:
-                    g.set_aborted(TestResult(n-i), "The ref server has aborted")
-            self.saved_goals=[];
-            gh.set_succeeded();
-
-
-        else:
-            pass
-
-    def cancelCallback(self,gh):
-        pass
-
-if __name__=="__main__":
-  rospy.init_node("bhv_dash");
-  ref_server = RefServer("dash");
-
-  rospy.spin();
+if __name__=='__main__':
+    main()
