@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QEvent>
 
+using namespace cv;
 namespace Ui {
 class interface_window;
 }
@@ -30,6 +31,16 @@ public:
     int mosue_x,mosue_y;
     int distance_space[100];
     int distance_pixel[100];
+    std::vector<int>scan_para;
+    std::vector<int>scan_near;
+    std::vector<int>scan_middle;
+    std::vector<int>scan_far;
+    int HSV_init[6];
+
+    std::vector<int> HSV_red;
+    std::vector<int> HSV_green;
+    std::vector<int> HSV_blue;
+    std::vector<int> HSV_yellow;
 
 protected:
     void timerEvent(QTimerEvent *);
@@ -48,11 +59,15 @@ private Q_SLOTS:
     double RGBtoHSV_H(double, double, double, double, double);
     double RGBtoHSV_S(double, double);
     void HSVtoRGB( double , double , double , int &, int &, int &);
+    void on_HSV_comboBox_currentIndexChanged(int index);
     void HSVModel(cv::Mat, double *);
+    void HSVmap();
     uchar * HSV_PrintAngle();
     uchar * HSV_PrintBackground();
     void Draw_inner_outer_circle(cv::Mat , int , int ,int , int );
     void White_Line(cv::Mat , int , int ,int , int );
+    void Black_Line(cv::Mat , int , int ,int , int );
+    void Draw_Front_Line(cv::Mat , int , int ,int );
 
 Q_SIGNALS:
     void Mouse_pressed();

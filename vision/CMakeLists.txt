@@ -51,6 +51,7 @@ catkin_package(CATKIN_DEPENDS message_runtime std_msgs roscpp
 foreach(subdir
     common
     Interface
+    prosilica_show
     )
   #install(DIRECTORY ${subdir} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/qt_tutorials)
   add_subdirectory(${subdir})

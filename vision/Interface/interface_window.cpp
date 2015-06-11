@@ -3,6 +3,16 @@
 
 #define PI 3.14159265
 
+#define REDITEM 0x01
+#define GREENITEM 0x02
+#define BLUEITEM 0x04
+#define YELLOWITEM 0x08
+
+#define FILE_PATH"/tmp/HSVcolormap.bin"
+#define IMAGE_TEST1 "src/vision/resources/1.bmp"
+#define IMAGE_TEST2 "src/vision/resources/2.bmp"
+#define IMAGE_TEST3 "src/vision/resources/3.bmp"
+#define IMAGE_TEST4 "src/vision/resources/4.bmp"
 using namespace std;
 using namespace cv;
 
@@ -14,7 +24,29 @@ interface_window::interface_window(QInterface *node, QWidget *parent) :
     ui->setupUi(this);
     interface->on_init();
     startTimer(10);
-
+/////////////////////////////////中心點前置參數////////////////////////////
+    interface->get_center();
+    if(interface->center_g_x != 0){
+        ui->Slider_X->setValue(interface->center_g_x);
+        ui->Slider_Y->setValue(interface->center_g_y);
+        ui->Slider_Inner->setValue(interface->center_g_inner);
+        ui->Slider_Outer->setValue(interface->center_g_outer);
+        ui->Slider_Front->setValue(interface->center_g_front);
+    }
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////掃瞄點前置參數////////////////////////////
+    interface->get_scan();
+    if(!interface->scan_g_para.empty()){
+        ui->Scane_NEARGAP->setValue(interface->scan_g_para[0]);
+        ui->Scane_NEARANGLE->setValue(interface->scan_g_para[1]);
+        ui->Scane_NEARPIXEL->setValue(interface->scan_g_para[2]);
+        ui->Scane_MIDDLEGAP->setValue(interface->scan_g_para[3]);
+        ui->Scane_MIDDLEPIXEL->setValue(interface->scan_g_para[4]);
+        ui->Scane_FARGAP->setValue(interface->scan_g_para[5]);
+        ui->Scane_FARPIXEL->setValue(interface->scan_g_para[6]);
+        ui->Scane_ENDGAP->setValue(interface->scan_g_para[7]);
+    }
+//////////////////////////////////////////////////////////////////////////
 ///////////////////////////////距離前置參數/////////////////////////////////
     ui->Dis_comboBox->addItem(" File ");
     ui->Dis_space_value->setNum(ui->Dis_space->value());
@@ -22,18 +54,10 @@ interface_window::interface_window(QInterface *node, QWidget *parent) :
     for(int i=0;i<ui->Dis_num->value();i++){
         distance_space[i]=i*ui->Dis_space->value();
     }
-    distance_pixel[0]=0;
-    distance_pixel[1]=21;
-    distance_pixel[2]=46;
-    distance_pixel[3]=66;
-    distance_pixel[4]=82;
-    distance_pixel[5]=94;
-    distance_pixel[6]=102;
-    distance_pixel[7]=109;
-    distance_pixel[8]=115;
-    distance_pixel[9]=121;
-    distance_pixel[10]=125;
-    distance_pixel[11]=129;
+    distance_pixel[0]=0;   distance_pixel[1]=21;   distance_pixel[2]=46;
+    distance_pixel[3]=66;  distance_pixel[4]=82;   distance_pixel[5]=94;
+    distance_pixel[6]=102; distance_pixel[7]=109;  distance_pixel[8]=115;
+    distance_pixel[9]=121; distance_pixel[10]=125; distance_pixel[11]=129;
     for(int i=0;i<ui->Dis_num->value();i++){
         ui->Dis_comboBox->addItem("Distance : " + QString::number(distance_space[i]));
     }
@@ -42,7 +66,24 @@ interface_window::interface_window(QInterface *node, QWidget *parent) :
                                     + " cm -> " + QString::number(distance_pixel[i]));
     }
 /////////////////////////////////////////////////////////////////////////
-
+/////////////////////////////////HSV前置參數//////////////////////////////
+    HSV_init[0] = 360; HSV_init[1] = 359;
+    HSV_init[2] = 255; HSV_init[3] = 0;
+    HSV_init[4] = 255; HSV_init[5] = 0;
+    interface->get_hsv();
+    if(!interface->Redmap.empty()){
+        HSV_red = interface->Redmap;   HSV_green = interface->Greenmap;
+        HSV_blue = interface->Bluemap; HSV_yellow = interface->Yellowmap;
+        ui->HSV_Huemax->setValue(HSV_red[0]);          ui->HSV_Huemin->setValue(HSV_red[1]);
+        ui->HSV_SaturationMax->setValue(HSV_red[2]);   ui->HSV_SaturationMin->setValue(HSV_red[3]);
+        ui->HSV_BrightnessMax->setValue(HSV_red[4]);   ui->HSV_BrightnessMin->setValue(HSV_red[5]);
+    }else{
+        for(int i=0;i<6;i++){
+            HSV_red.push_back(HSV_init[i]);  HSV_green.push_back(HSV_init[i]);
+            HSV_blue.push_back(HSV_init[i]); HSV_yellow.push_back(HSV_init[i]);
+        }
+    }
+/////////////////////////////////////////////////////////////////////////
 }
 
 interface_window::~interface_window()
@@ -51,22 +92,23 @@ interface_window::~interface_window()
 }
 void interface_window::timerEvent(QTimerEvent *)
 {
-    QImage showImg;
-    int center_x = ui->Slider_X->value();
-    int center_y = ui->Slider_Y->value();
-    int inner = ui->Slider_Inner->value();
-    int outer = ui->Slider_Outer->value();
+    int center_x = ui->Slider_X->value();  int center_y = ui->Slider_Y->value();
+    int inner = ui->Slider_Inner->value(); int outer = ui->Slider_Outer->value();
     int front = ui->Slider_Front->value();
     if(ros::ok()){
         if(interface->cv_ptr != NULL){
-            //frame = cv::imread( "blue.png" , CV_LOAD_IMAGE_COLOR );
-            frame = interface->cv_ptr->image;
+            frame = cv::imread( IMAGE_TEST4 , CV_LOAD_IMAGE_COLOR );
+            //frame = interface->cv_ptr->image;
             double frame_HSV[frame.rows*frame.cols*3];
             if(ui->tabModel->currentIndex()==0){
 
             }
             else if(ui->tabModel->currentIndex()==1){//中心點
                 Center(frame, center_x, center_y, inner, outer, front);
+                if(ui->Center_sent->isDown()==true){
+                    interface->sent_center(center_x, center_y, inner, outer, front);
+                    ui->Center_sent->setDown(0);
+                }
             }
             else if(ui->tabModel->currentIndex()==2){//掃描參數
                 Scan(frame, center_x, center_y);
@@ -80,13 +122,20 @@ void interface_window::timerEvent(QTimerEvent *)
                     HSVModel(frame, frame_HSV);
                     HSV_PrintAngle();
                     HSV_PrintBackground();
+                    if(ui->HSV_makefile->isDown()==true){
+                        HSVmap();
+                        ui->HSV_makefile->setDown(0);
+                    }
                 }
-                else if(ui->tabColor->currentIndex()==1){                    
+                else if(ui->tabColor->currentIndex()==1){
                     White_Line(frame,center_x,center_y,inner,outer);
                     Draw_inner_outer_circle(frame,center_x,center_y,inner,outer);
+                    Draw_Front_Line(frame,center_x,center_y,outer);
                 }
                 else if(ui->tabColor->currentIndex()==2){
-
+                    Black_Line(frame,center_x,center_y,inner,outer);
+                    Draw_inner_outer_circle(frame,center_x,center_y,inner,outer);
+                    Draw_Front_Line(frame,center_x,center_y,outer);
                 }
             }
             else if(ui->tabModel->currentIndex()==5){
@@ -100,7 +149,6 @@ void interface_window::timerEvent(QTimerEvent *)
 ///////////////////////////////影像輸出////////////////////////////////////
 void interface_window::Showimg(Mat frame){
     QImage img(frame.cols,frame.rows,QImage::Format_RGB888);
-    //cv::flip(frame,frame,1);
     for(int i=0;i<frame.rows;i++){
         for(int j=0;j<frame.cols;j++){
             unsigned char B = frame.data[(i*frame.cols*3)+(j*3)+0];
@@ -167,6 +215,10 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+0]=0;
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+1]=255;
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+2]=0;
+            if(ui->Scane_Sent->isDown()==true){
+                scan_near.push_back(center_x+xx+space_x);
+                scan_near.push_back(center_y-yy-space_y);
+            }
         }
     }
     for(int i=ui->Scane_NEARANGLE->value()/10;i<=360;i=i+(ui->Scane_NEARANGLE->value()/10)){
@@ -180,7 +232,12 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+0]=0;
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+1]=255;
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+2]=0;
-
+            if(ui->Scane_Sent->isDown()==true){
+                scan_middle.push_back(center_x+xx+space_x);
+                scan_middle.push_back(center_y-yy-space_y);
+            }
+        }
+        for(int j=1;j<=num;j++){
             double angle2 = angle+(ui->Scane_NEARANGLE->value()/20*M_PI/180);
             int xx2=j*ui->Scane_MIDDLEPIXEL->value()*cos(angle2);
             int yy2=j*ui->Scane_MIDDLEPIXEL->value()*sin(angle2);
@@ -189,10 +246,17 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
             frame.data[((center_y-yy2-space_y2)*frame.cols*3)+((center_x+xx2+space_x2)*3)+0]=0;
             frame.data[((center_y-yy2-space_y2)*frame.cols*3)+((center_x+xx2+space_x2)*3)+1]=255;
             frame.data[((center_y-yy2-space_y2)*frame.cols*3)+((center_x+xx2+space_x2)*3)+2]=0;
+            if(ui->Scane_Sent->isDown()==true){
+                scan_middle.push_back(center_x+xx2+space_x2);
+                scan_middle.push_back(center_y-yy2-space_y2);
+            }
         }
     }
     for(int i=ui->Scane_NEARANGLE->value()/10;i<=360;i=i+(ui->Scane_NEARANGLE->value()/10)){
         double angle=i*M_PI/180;
+        double angle2 = angle+(ui->Scane_NEARANGLE->value()/20*M_PI/180);
+        double angle3 = angle+(ui->Scane_NEARANGLE->value()/40*M_PI/180);
+        double angle4 = angle2+(ui->Scane_NEARANGLE->value()/40*M_PI/180);
         int num=((ui->Scane_ENDGAP->value())-(ui->Scane_FARGAP->value()))/(ui->Scane_FARPIXEL->value());
         for(int j=1;j<=num;j++){
             int xx=j*ui->Scane_FARPIXEL->value()*cos(angle);
@@ -202,8 +266,12 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+0]=0;
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+1]=255;
             frame.data[((center_y-yy-space_y)*frame.cols*3)+((center_x+xx+space_x)*3)+2]=0;
-
-            double angle3 = angle+(ui->Scane_NEARANGLE->value()/40*M_PI/180);
+            if(ui->Scane_Sent->isDown()==true){
+                scan_far.push_back(center_x+xx+space_x);
+                scan_far.push_back(center_y-yy-space_y);
+            }
+        }
+        for(int j=1;j<=num;j++){
             int xx3=j*ui->Scane_FARPIXEL->value()*cos(angle3);
             int yy3=j*ui->Scane_FARPIXEL->value()*sin(angle3);
             int space_x3=ui->Scane_FARGAP->value()*cos(angle3);
@@ -211,8 +279,12 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
             frame.data[((center_y-yy3-space_y3)*frame.cols*3)+((center_x+xx3+space_x3)*3)+0]=0;
             frame.data[((center_y-yy3-space_y3)*frame.cols*3)+((center_x+xx3+space_x3)*3)+1]=255;
             frame.data[((center_y-yy3-space_y3)*frame.cols*3)+((center_x+xx3+space_x3)*3)+2]=0;
-
-            double angle2 = angle+(ui->Scane_NEARANGLE->value()/20*M_PI/180);
+            if(ui->Scane_Sent->isDown()==true){
+                scan_far.push_back(center_x+xx3+space_x3);
+                scan_far.push_back(center_y-yy3-space_y3);
+            }
+        }
+        for(int j=1;j<=num;j++){
             int xx2=j*ui->Scane_FARPIXEL->value()*cos(angle2);
             int yy2=j*ui->Scane_FARPIXEL->value()*sin(angle2);
             int space_x2=ui->Scane_FARGAP->value()*cos(angle2);
@@ -220,8 +292,12 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
             frame.data[((center_y-yy2-space_y2)*frame.cols*3)+((center_x+xx2+space_x2)*3)+0]=0;
             frame.data[((center_y-yy2-space_y2)*frame.cols*3)+((center_x+xx2+space_x2)*3)+1]=255;
             frame.data[((center_y-yy2-space_y2)*frame.cols*3)+((center_x+xx2+space_x2)*3)+2]=0;
-
-            double angle4 = angle2+(ui->Scane_NEARANGLE->value()/40*M_PI/180);
+            if(ui->Scane_Sent->isDown()==true){
+                scan_far.push_back(center_x+xx2+space_x2);
+                scan_far.push_back(center_y-yy2-space_y2);
+            }
+        }
+        for(int j=1;j<=num;j++){
             int xx4=j*ui->Scane_FARPIXEL->value()*cos(angle4);
             int yy4=j*ui->Scane_FARPIXEL->value()*sin(angle4);
             int space_x4=ui->Scane_FARGAP->value()*cos(angle4);
@@ -229,7 +305,23 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
             frame.data[((center_y-yy4-space_y4)*frame.cols*3)+((center_x+xx4+space_x4)*3)+0]=0;
             frame.data[((center_y-yy4-space_y4)*frame.cols*3)+((center_x+xx4+space_x4)*3)+1]=255;
             frame.data[((center_y-yy4-space_y4)*frame.cols*3)+((center_x+xx4+space_x4)*3)+2]=0;
+            if(ui->Scane_Sent->isDown()==true){
+                scan_far.push_back(center_x+xx4+space_x4);
+                scan_far.push_back(center_y-yy4-space_y4);
+            }
         }
+    }
+    if(ui->Scane_Sent->isDown()==true){
+        scan_para.push_back(ui->Scane_NEARGAP->value());
+        scan_para.push_back(ui->Scane_NEARANGLE->value());
+        scan_para.push_back(ui->Scane_NEARPIXEL->value());
+        scan_para.push_back(ui->Scane_MIDDLEGAP->value());
+        scan_para.push_back(ui->Scane_MIDDLEPIXEL->value());
+        scan_para.push_back(ui->Scane_FARGAP->value());
+        scan_para.push_back(ui->Scane_FARPIXEL->value());
+        scan_para.push_back(ui->Scane_ENDGAP->value());
+        interface->sent_scan(scan_para, scan_near, scan_middle, scan_far);
+        ui->Scane_Sent->setDown(0);
     }
 }
 ////////////////////////////////////////////////////////////////////////
@@ -414,36 +506,61 @@ void interface_window::HSVtoRGB( double Hvalue, double Svalue, double Vvalue, in
 }
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////色彩搜寻///////////////////////////////////
+void interface_window::on_HSV_comboBox_currentIndexChanged(int index)
+{
+    if(ui->HSV_comboBox->currentIndex()==0){
+        ui->HSV_Huemax->setValue(HSV_red[0]);          ui->HSV_Huemin->setValue(HSV_red[1]);
+        ui->HSV_SaturationMax->setValue(HSV_red[2]);   ui->HSV_SaturationMin->setValue(HSV_red[3]);
+        ui->HSV_BrightnessMax->setValue(HSV_red[4]);   ui->HSV_BrightnessMin->setValue(HSV_red[5]);
+    }else if(ui->HSV_comboBox->currentIndex()==1){
+        ui->HSV_Huemax->setValue(HSV_green[0]);          ui->HSV_Huemin->setValue(HSV_green[1]);
+        ui->HSV_SaturationMax->setValue(HSV_green[2]);   ui->HSV_SaturationMin->setValue(HSV_green[3]);
+        ui->HSV_BrightnessMax->setValue(HSV_green[4]);   ui->HSV_BrightnessMin->setValue(HSV_green[5]);
+    }else if(ui->HSV_comboBox->currentIndex()==2){
+        ui->HSV_Huemax->setValue(HSV_blue[0]);          ui->HSV_Huemin->setValue(HSV_blue[1]);
+        ui->HSV_SaturationMax->setValue(HSV_blue[2]);   ui->HSV_SaturationMin->setValue(HSV_blue[3]);
+        ui->HSV_BrightnessMax->setValue(HSV_blue[4]);   ui->HSV_BrightnessMin->setValue(HSV_blue[5]);
+    }else if(ui->HSV_comboBox->currentIndex()==3){
+        ui->HSV_Huemax->setValue(HSV_yellow[0]);          ui->HSV_Huemin->setValue(HSV_yellow[1]);
+        ui->HSV_SaturationMax->setValue(HSV_yellow[2]);   ui->HSV_SaturationMin->setValue(HSV_yellow[3]);
+        ui->HSV_BrightnessMax->setValue(HSV_yellow[4]);   ui->HSV_BrightnessMin->setValue(HSV_yellow[5]);
+    }
+}
 void interface_window::HSVModel(Mat frame, double *frame_HSV)
 {
+    if(ui->HSV_reset->isDown() == true){
+        ui->HSV_Huemax->setValue(HSV_init[0]);          ui->HSV_Huemin->setValue(HSV_init[1]);
+        ui->HSV_SaturationMax->setValue(HSV_init[2]);   ui->HSV_SaturationMin->setValue(HSV_init[3]);
+        ui->HSV_BrightnessMax->setValue(HSV_init[4]);   ui->HSV_BrightnessMin->setValue(HSV_init[5]);
+    }
     for(int i=0;i<frame.rows;i++){
         for(int j=0;j<frame.cols;j++){
             if(ui->HSV_Huemin->value()<ui->HSV_Huemax->value()){
-            if(  (frame_HSV[(i*frame.cols*3)+(j*3)+0] >= ui->HSV_Huemin->value())
-               &&(frame_HSV[(i*frame.cols*3)+(j*3)+0] <= ui->HSV_Huemax->value())
-               &&(frame_HSV[(i*frame.cols*3)+(j*3)+1] >= ui->HSV_SaturationMin->value())
-               &&(frame_HSV[(i*frame.cols*3)+(j*3)+1] <= ui->HSV_SaturationMax->value())
-               &&(frame_HSV[(i*frame.cols*3)+(j*3)+2] >= ui->HSV_BrightnessMin->value())
-               &&(frame_HSV[(i*frame.cols*3)+(j*3)+2] <= ui->HSV_BrightnessMax->value()) )
-            {
-                if(ui->HSV_comboBox->currentIndex()==0){
-                    frame.data[(i*frame.cols*3)+(j*3)+0] = 255;
-                    frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
-                    frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
-                }if(ui->HSV_comboBox->currentIndex()==1){
-                    frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
-                    frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
-                    frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
-                }if(ui->HSV_comboBox->currentIndex()==2){
-                    frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
-                    frame.data[(i*frame.cols*3)+(j*3)+1] = 255;
-                    frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
-                }if(ui->HSV_comboBox->currentIndex()==3){
-                    frame.data[(i*frame.cols*3)+(j*3)+0] = 255;
-                    frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
-                    frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
+                if(  (frame_HSV[(i*frame.cols*3)+(j*3)+0] >= ui->HSV_Huemin->value())
+                    &&(frame_HSV[(i*frame.cols*3)+(j*3)+0] <= ui->HSV_Huemax->value())
+                    &&(frame_HSV[(i*frame.cols*3)+(j*3)+1] >= ui->HSV_SaturationMin->value())
+                    &&(frame_HSV[(i*frame.cols*3)+(j*3)+1] <= ui->HSV_SaturationMax->value())
+                    &&(frame_HSV[(i*frame.cols*3)+(j*3)+2] >= ui->HSV_BrightnessMin->value())
+                    &&(frame_HSV[(i*frame.cols*3)+(j*3)+2] <= ui->HSV_BrightnessMax->value()) )
+                {
+                    if(ui->HSV_comboBox->currentIndex()==0){
+                        frame.data[(i*frame.cols*3)+(j*3)+0] = 255;
+                        frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
+                        frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
+                    }else if(ui->HSV_comboBox->currentIndex()==1){
+                        frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
+                        frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
+                        frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
+                    }else if(ui->HSV_comboBox->currentIndex()==2){
+                        frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
+                        frame.data[(i*frame.cols*3)+(j*3)+1] = 255;
+                        frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
+                    }else if(ui->HSV_comboBox->currentIndex()==3){
+                        frame.data[(i*frame.cols*3)+(j*3)+0] = 255;
+                        frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
+                        frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
+                    }
                 }
-            }
             }else{
                 if(  (frame_HSV[(i*frame.cols*3)+(j*3)+0] >= ui->HSV_Huemin->value())
                    ||(frame_HSV[(i*frame.cols*3)+(j*3)+0] <= ui->HSV_Huemax->value())
@@ -456,15 +573,15 @@ void interface_window::HSVModel(Mat frame, double *frame_HSV)
                         frame.data[(i*frame.cols*3)+(j*3)+0] = 255;
                         frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
                         frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
-                    }if(ui->HSV_comboBox->currentIndex()==1){
+                    }else if(ui->HSV_comboBox->currentIndex()==1){
                         frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
                         frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
                         frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
-                    }if(ui->HSV_comboBox->currentIndex()==2){
+                    }else if(ui->HSV_comboBox->currentIndex()==2){
                         frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
                         frame.data[(i*frame.cols*3)+(j*3)+1] = 255;
                         frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
-                    }if(ui->HSV_comboBox->currentIndex()==3){
+                    }else if(ui->HSV_comboBox->currentIndex()==3){
                         frame.data[(i*frame.cols*3)+(j*3)+0] = 255;
                         frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
                         frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
@@ -473,8 +590,97 @@ void interface_window::HSVModel(Mat frame, double *frame_HSV)
             }
         }
     }
+    if(ui->HSV_save->isDown() == true){
+        if(ui->HSV_comboBox->currentIndex()==0){
+            HSV_red[0] = ui->HSV_Huemax->value();          HSV_red[1] = ui->HSV_Huemin->value();
+            HSV_red[2] = ui->HSV_SaturationMax->value();   HSV_red[3] = ui->HSV_SaturationMin->value();
+            HSV_red[4] = ui->HSV_BrightnessMax->value();   HSV_red[5] = ui->HSV_BrightnessMin->value();
+        }else if(ui->HSV_comboBox->currentIndex()==1){
+            HSV_green[0] = ui->HSV_Huemax->value();        HSV_green[1] = ui->HSV_Huemin->value();
+            HSV_green[2] = ui->HSV_SaturationMax->value(); HSV_green[3] = ui->HSV_SaturationMin->value();
+            HSV_green[4] = ui->HSV_BrightnessMax->value(); HSV_green[5] = ui->HSV_BrightnessMin->value();
+        }else if(ui->HSV_comboBox->currentIndex()==2){
+            HSV_blue[0] = ui->HSV_Huemax->value();         HSV_blue[1] = ui->HSV_Huemin->value();
+            HSV_blue[2] = ui->HSV_SaturationMax->value();  HSV_blue[3] = ui->HSV_SaturationMin->value();
+            HSV_blue[4] = ui->HSV_BrightnessMax->value();  HSV_blue[5] = ui->HSV_BrightnessMin->value();
+        }else if(ui->HSV_comboBox->currentIndex()==3){
+            HSV_yellow[0] = ui->HSV_Huemax->value();       HSV_yellow[1] = ui->HSV_Huemin->value();
+            HSV_yellow[2] = ui->HSV_SaturationMax->value();HSV_yellow[3] = ui->HSV_SaturationMin->value();
+            HSV_yellow[4] = ui->HSV_BrightnessMax->value();HSV_yellow[5] = ui->HSV_BrightnessMin->value();
+        }
+    }
 }
 ////////////////////////////////////////////////////////////////////////
+/// ///////////////////////////////HSVmap////////////////////////////////
+void interface_window::HSVmap()
+{
+    unsigned char *HSVmap = new unsigned char[256*256*256];
+    for(int b=0;b<256;b++){
+        for(int g=0;g<256;g++){
+            for(int r=0;r<256;r++){
+                double Rnew,Gnew,Bnew,HSVmax,HSVmin,H_sum,S_sum,V_sum;
+                Bnew = b/255.0;
+                Gnew = g/255.0;
+                Rnew = r/255.0;
+                RGBtoHSV_maxmin(Rnew, Gnew, Bnew, HSVmax, HSVmin);
+                H_sum = RGBtoHSV_H(Rnew, Gnew, Bnew, HSVmax, HSVmin);
+                S_sum = RGBtoHSV_S(HSVmax,HSVmin);
+                V_sum = HSVmax*255.0;
+                HSVmap[r+(g<<8)+(b<<16)] = 0x00;
+                if(HSV_red[1] < HSV_red[0]){
+                    if( (H_sum >= HSV_red[1]) && (H_sum <= HSV_red[0])
+                      &&(S_sum >= HSV_red[3]) && (S_sum <= HSV_red[2])
+                      &&(V_sum >= HSV_red[5]) && (V_sum <= HSV_red[4]) )
+                        HSVmap[r+(g<<8)+(b<<16)] = HSVmap[r+(g<<8)+(b<<16)] | REDITEM;
+
+                }else{
+                    if( (H_sum >= HSV_red[1]) || (H_sum <= HSV_red[0])
+                      &&(S_sum >= HSV_red[3]) && (S_sum <= HSV_red[2])
+                      &&(V_sum >= HSV_red[5]) && (V_sum <= HSV_red[4]) )
+                        HSVmap[r+(g<<8)+(b<<16)] = HSVmap[r+(g<<8)+(b<<16)] | REDITEM;
+               }
+                if(HSV_green[1] < HSV_green[0]){
+                    if( (H_sum >= HSV_green[1]) && (H_sum <= HSV_green[0])
+                      &&(S_sum >= HSV_green[3]) && (S_sum <= HSV_green[2])
+                      &&(V_sum >= HSV_green[5]) && (V_sum <= HSV_green[4]) )
+                        HSVmap[r+(g<<8)+(b<<16)] = HSVmap[r+(g<<8)+(b<<16)] | GREENITEM;
+                }else{
+                    if( (H_sum >= HSV_green[1]) || (H_sum <= HSV_green[0])
+                      &&(S_sum >= HSV_green[3]) && (S_sum <= HSV_green[2])
+                      &&(V_sum >= HSV_green[5]) && (V_sum <= HSV_green[4]) )
+                        HSVmap[r+(g<<8)+(b<<16)] = HSVmap[r+(g<<8)+(b<<16)] | GREENITEM;
+               }
+                if(HSV_blue[1] < HSV_blue[0]){
+                    if( (H_sum >= HSV_blue[1]) && (H_sum <= HSV_blue[0])
+                      &&(S_sum >= HSV_blue[3]) && (S_sum <= HSV_blue[2])
+                      &&(V_sum >= HSV_blue[5]) && (V_sum <= HSV_blue[4]) )
+                        HSVmap[r+(g<<8)+(b<<16)] = HSVmap[r+(g<<8)+(b<<16)] | BLUEITEM;
+                }else{
+                    if( (H_sum >= HSV_blue[1]) || (H_sum <= HSV_blue[0])
+                      &&(S_sum >= HSV_blue[3]) && (S_sum <= HSV_blue[2])
+                      &&(V_sum >= HSV_blue[5]) && (V_sum <= HSV_blue[4]) )
+                        HSVmap[r+(g<<8)+(b<<16)] = HSVmap[r+(g<<8)+(b<<16)] | BLUEITEM;
+               }
+                if(HSV_yellow[1] < HSV_yellow[0]){
+                    if( (H_sum >= HSV_yellow[1]) && (H_sum <= HSV_yellow[0])
+                      &&(S_sum >= HSV_yellow[3]) && (S_sum <= HSV_yellow[2])
+                      &&(V_sum >= HSV_yellow[5]) && (V_sum <= HSV_yellow[4]) )
+                        HSVmap[r+(g<<8)+(b<<16)] = HSVmap[r+(g<<8)+(b<<16)] | YELLOWITEM;
+                }else{
+                    if( (H_sum >= HSV_yellow[1]) || (H_sum <= HSV_yellow[0])
+                      &&(S_sum >= HSV_yellow[3]) && (S_sum <= HSV_yellow[2])
+                      &&(V_sum >= HSV_yellow[5]) && (V_sum <= HSV_yellow[4]) )
+                        HSVmap[r+(g<<8)+(b<<16)] = HSVmap[r+(g<<8)+(b<<16)] | YELLOWITEM;
+               }
+            }
+        }
+    }
+    interface->sent_hsv(HSV_red,HSV_green,HSV_blue,HSV_yellow);
+    FILE *file=fopen(FILE_PATH,"wb"); //開啟檔案來寫
+    fwrite( HSVmap, 1, 256*256*256 , file );
+    fclose(file);
+}
+/// ////////////////////////////////////////////////////////////////////
 ////////////////////////////HSV_PrintAngle//////////////////////////////
 uchar * interface_window::HSV_PrintAngle()
 {
@@ -495,35 +701,25 @@ uchar * interface_window::HSV_PrintAngle()
     tmpAngle = (angleendpoint - anglestarpoint) / 2.0 + anglestarpoint;
     if(tmpAngle > M_PI)tmpAngle -= (2.0 * M_PI);
     tmpAngle *=(float)2.0 * (float)M_PI * 180 / M_PI;
-    for(int j=0;j<h;j++)
-    {
-        for(int i=0;i<w;i++)
-        {
+    for(int j=0;j<h;j++){
+        for(int i=0;i<w;i++){
             line = ((j*w*3)+(i*3));
-            if((2*i+j)<h)
-            {
+            if((2*i+j)<h){
                 arr[line]=255;
                 arr[line+1]=255;
                 arr[line+2]=255;
-            }else
-            {
+            }else{
                 Mgn = (float)i / (float)63.0;
                 Brightness = (float)j / (float)127.0;
                 if(Mgn >=(float) ui->HSV_SaturationMin->value() / 255.0
                         && Mgn <= (float) ui->HSV_SaturationMax->value() / 255.0
                         &&Brightness >= (float) ui->HSV_BrightnessMin->value() /255.0
-                        &&Brightness <= (float) ui->HSV_BrightnessMax->value() /255.0)
-                {
+                        &&Brightness <= (float) ui->HSV_BrightnessMax->value() /255.0){
                     Angle = tmpAngle;
-                }
-                else
-                {
-                    if(tmpAngle > 180.0)
-                    {
+                }else{
+                    if(tmpAngle > 180.0){
                         Angle = tmpAngle - (float)180.0;
-                    }
-                    else
-                    {
+                    }else{
                         Angle = tmpAngle + (float)180.0;
                     }
                 }
@@ -536,10 +732,8 @@ uchar * interface_window::HSV_PrintAngle()
     }
     QImage img(w,h,QImage::Format_RGB888);
     QRgb val;
-    for(int j=0;j<h;j++)
-    {
-        for(int i=0;i<w;i++)
-        {
+    for(int j=0;j<h;j++){
+        for(int i=0;i<w;i++){
             line = ((j*w*3)+(i*3));
             val = qRgb(arr[line],arr[line+1],arr[line+2]);
             img.setPixel(i,j,val);
@@ -561,33 +755,24 @@ uchar * interface_window::HSV_PrintBackground()
     int rvalue,gvalue,bvalue;
     float Angle,Mgn,Brightness;
     tmpvalue = 128 / 2 - 1;
-    for(int j=0;j<h;j++)
-    {
-        for(int i=0;i<w;i++)
-        {
+    for(int j=0;j<h;j++){
+        for(int i=0;i<w;i++){
             line = ((j*w*3)+(i*3));
             Mgn = (float) hypot((double)(j - tmpvalue), (double)(i - tmpvalue));
             Mgn /= (float)(tmpvalue);
-            if(Mgn > 1.0)
-            {
+            if(Mgn > 1.0){
                 arr[line] = 255;
                 arr[line+1]=255;
                 arr[line+2]=255;
-            }
-            else
-            {
-                if(i - tmpvalue==0)
-                {
+            }else{
+                if(i - tmpvalue==0){
                     if((j - tmpvalue)<0)Angle = 0.25;
                     else Angle = 0.75;
-                }
-                else
-                {
+                }else{
                     Angle = atan2((float)(j - tmpvalue), (float)(i - tmpvalue));
                     Angle = Angle / (float)M_PI *(float)0.5 + (float)0.5;
                     if(Angle >= 1.0) Angle = 0.0;
-                }
-                if(ui->HSV_SaturationMax->value() / (float)255.0 >= Mgn && ui->HSV_SaturationMin->value() / (float)255.0 <= Mgn)
+                }if(ui->HSV_SaturationMax->value() / (float)255.0 >= Mgn && ui->HSV_SaturationMin->value() / (float)255.0 <= Mgn)
                 {
                     if(ui->HSV_Huemax->value() / (float)360.0 >= ui->HSV_Huemin->value() / (float)360.0
                             && ui->HSV_Huemax->value() / (float)360.0 >= Angle
@@ -617,10 +802,8 @@ uchar * interface_window::HSV_PrintBackground()
     }
     QImage img(w,h,QImage::Format_RGB888);
     QRgb val;
-    for(int j=0;j<h;j++)
-    {
-        for(int i=0;i<w;i++)
-        {
+    for(int j=0;j<h;j++){
+        for(int i=0;i<w;i++){
             line = ((j*w*3)+(i*3));
             val = qRgb(arr[line],arr[line+1],arr[line+2]);
             img.setPixel(i,j,val);
@@ -688,4 +871,87 @@ void interface_window::Draw_inner_outer_circle(cv::Mat frame, int center_X, int 
     }
 }
 ////////////////////////////////////////////////////////////////////////
+///////////////////////////////Black_Line///////////////////////////////
+void interface_window :: Black_Line(cv::Mat frame, int center_X, int center_Y,int inner, int outer)
+{
+    Mat Outimg(cv::Size(frame.cols,frame.rows),CV_8UC3);
+    double gray_num[256] = {0};
+    int avg_new=0;
+    int gray_sum = 0;
+    int gray_avg = 0;
+    int gray_low = 0;
+    int gray_hight = 0;
+    int avg_old = 0;
+    for(int i=0;i<frame.rows;i++){
+        for(int j=0;j<frame.cols;j++){
+            unsigned char gray =(frame.data[(i*frame.cols*3)+(j*3)+0]+
+                                frame.data[(i*frame.cols*3)+(j*3)+1]+
+                                frame.data[(i*frame.cols*3)+(j*3)+2])/3;
+            Outimg.data[(i*Outimg.cols*3)+(j*3)+0] = gray;
+            Outimg.data[(i*Outimg.cols*3)+(j*3)+1] = gray;
+            Outimg.data[(i*Outimg.cols*3)+(j*3)+2] = gray;
+            gray_num[gray]++;
+        }
+    }
+    for(int i=0;i<256;i++)gray_sum = gray_sum+(gray_num[i]*i);
+    gray_avg = gray_sum/(Outimg.rows*Outimg.cols);
+    avg_new = gray_avg;
+    while((avg_old!=avg_new)&&(avg_old!=avg_new-1)){
+        avg_old = avg_new;
+        for(int i=0;i<avg_old;i++)gray_low = gray_low+(gray_num[i]*i);
+        gray_low = gray_low/(Outimg.rows*Outimg.cols);
+        for(int i=avg_old;i<256;i++)gray_hight = gray_hight+(gray_num[i]*i);
+        gray_hight = gray_hight/(Outimg.rows*Outimg.cols);
+        avg_new = (gray_low+gray_hight)/2;
+    }
+    for(int i=0;i<Outimg.rows;i++){
+        for(int j=0;j<Outimg.cols;j++){
+            if(Outimg.data[(i*Outimg.cols*3)+(j*3)+0]<avg_new){
+                Outimg.data[(i*Outimg.cols*3)+(j*3)+0] = 0;
+                Outimg.data[(i*Outimg.cols*3)+(j*3)+1] = 0;
+                Outimg.data[(i*Outimg.cols*3)+(j*3)+2] = 0;
+            }else{
+                Outimg.data[(i*Outimg.cols*3)+(j*3)+0] = 255;
+                Outimg.data[(i*Outimg.cols*3)+(j*3)+1] = 255;
+                Outimg.data[(i*Outimg.cols*3)+(j*3)+2] = 255;
+            }
+        }
+    }
+    for(int a=ui->Black_Angle_->value()/10;a<=360;a=a+ui->Black_Angle_->value()/10){
+        int angle_be = a;
+        if(angle_be>360)angle_be-=360;
+        if(angle_be<0) angle_be+=360;
+        double angle_af = angle_be*M_PI/180;
+        double x = cos(angle_af);
+        double y = sin(angle_af);
+        for(int r=inner;r<=outer;r++){
+            int dis_x = x*r;
+            int dis_y = y*r;
+            if(Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+0] ==0
+                    &&Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+1] ==0
+                    &&Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+2] ==0){
 
+                break;
+            }else{
+                Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+0] = 0;
+                Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+1] = 0;
+                Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+2] = 255;
+            }
+        }
+    }
+    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outimg.data[i];
+}
+////////////////////////////////////////////////////////////////////////
+void interface_window::Draw_Front_Line(cv::Mat frame, int center_X, int center_Y,int outer)
+{
+    double angle = ui->Slider_Front->value()*M_PI/180;
+    double x = cos(angle);
+    double y = sin(angle);
+    for(int r=0;r<outer;r++){
+        int dis_x = x*r;
+        int dis_y = y*r;
+        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+0] = 255;
+        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+1] = 0;
+        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+2] = 0;
+    }
+}
