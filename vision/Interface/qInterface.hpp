@@ -60,14 +60,14 @@ public:
         nh->setParam("/FIRA/Center/Outer",center_outer);
         nh->setParam("/FIRA/Center/Front",center_front);
     }
-    int center_g_x, center_g_y, center_g_inner, center_g_outer, center_g_front;
+    int center_get_x, center_get_y, center_get_inner, center_get_outer, center_get_front;
     void get_center(){
-        center_g_x = 0;
-        nh->getParam("/FIRA/Center/X",center_g_x);
-        nh->getParam("/FIRA/Center/Y",center_g_y);
-        nh->getParam("/FIRA/Center/Inner",center_g_inner);
-        nh->getParam("/FIRA/Center/Outer",center_g_outer);
-        nh->getParam("/FIRA/Center/Front",center_g_front);
+        center_get_x = 0;
+        nh->getParam("/FIRA/Center/X",center_get_x);
+        nh->getParam("/FIRA/Center/Y",center_get_y);
+        nh->getParam("/FIRA/Center/Inner",center_get_inner);
+        nh->getParam("/FIRA/Center/Outer",center_get_outer);
+        nh->getParam("/FIRA/Center/Front",center_get_front);
     }
     //--------------------------------------------------
     //---------------------scan-------------------------
@@ -77,9 +77,16 @@ public:
         nh->setParam("/FIRA/Scan/Middle",scan_middle);
         nh->setParam("/FIRA/Scan/Far",scan_far);
     }
-    std::vector<int>scan_g_para;
+    std::vector<int>scan_get_para;
     void get_scan(){
-        nh->getParam("/FIRA/Scan/Parameter",scan_g_para);
+        nh->getParam("/FIRA/Scan/Parameter",scan_get_para);
+    }
+    //--------------------------------------------------
+    //--------------------distance----------------------
+    void sent_dis(int dis_gap,std::vector<int>dis_space, std::vector<int>dis_pixel){
+        nh->setParam("/FIRA/Distance/Gap",dis_gap);
+        nh->setParam("/FIRA/Distance/Space",dis_space);
+        nh->setParam("/FIRA/Distance/Pixel",dis_pixel);
     }
     //--------------------------------------------------
     //----------------------HSV-------------------------

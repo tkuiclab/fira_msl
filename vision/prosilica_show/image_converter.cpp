@@ -1,14 +1,12 @@
 #include "image_converter.hpp"
+#include "math.h"
 
+#define PI 3.14159265
 #define REDITEM 0x01
 #define GREENITEM 0x02
 #define BLUEITEM 0x04
 #define YELLOWITEM 0x08
 #define FILE_PATH "/tmp/HSVcolormap.bin"
-#define IMAGE_TEST1 "src/vision/resources/1.bmp"
-#define IMAGE_TEST2 "src/vision/resources/2.bmp"
-#define IMAGE_TEST3 "src/vision/resources/3.bmp"
-#define IMAGE_TEST4 "src/vision/resources/4.bmp"
 
 using namespace std;
 using namespace cv;
@@ -21,7 +19,10 @@ ImageConverter::ImageConverter()
     image_sub_ = it_.subscribe("/camera/image_raw", 1, &ImageConverter::imageCb, this);
 
     color_map = ColorFile();
+    get_center();
     get_scan();
+    get_distance();
+    core_num = 0;
 } 
 
 ImageConverter::~ImageConverter()
@@ -29,9 +30,9 @@ ImageConverter::~ImageConverter()
 
 }
 
-
 void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 {
+    int StartTime = ros::Time::now().toNSec();
     cv_bridge::CvImagePtr cv_ptr;
     try
     {
@@ -42,7 +43,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-    cv_ptr->image = imread( IMAGE_TEST4 , CV_LOAD_IMAGE_COLOR );
+    //cv_ptr->image = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
     Mat Redmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
     Mat Greenmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
     Mat Bluemap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
@@ -52,33 +53,71 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min;
     int Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min;
     int Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min;
+    int Red_center[2], Blue_center[2], Yellow_center[2];
 
     objectdet(Redmap,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
     objectdet(Bluemap,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
     objectdet(Yellowmap,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
     place_case(Greenmap,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
 
-    if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0)){
-        draw(cv_ptr->image,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
-    }
+    Red_center[0] = (Redmap_x_max+Redmap_x_min)/2;
+    Red_center[1] = (Redmap_y_max+Redmap_y_min)/2;
+    Blue_center[0] = (Bluemap_x_max+Bluemap_x_min)/2;
+    Blue_center[1] = (Bluemap_y_max+Bluemap_y_min)/2;
+    Yellow_center[0] = (Yellowmap_x_max+Yellowmap_x_min)/2;
+    Yellow_center[1] = (Yellowmap_y_max+Yellowmap_y_min)/2;
+
     if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0)){
-        draw(cv_ptr->image,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
+        if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0)){
+            if( (Red_center[0]>Greenmap_x_min) && (Red_center[0]<Greenmap_x_max)
+              &&(Red_center[1]>Greenmap_y_min) && (Red_center[1]<Greenmap_y_max) ){
+                objectdet_distance(Red_center[0], Red_center[1], Red_LR, Red_angle, Red_dis);
+            }else{
+                ROS_ERROR("Can't find ball!!!");
+            }
+        }else{
+            ROS_ERROR("Can't find ball!!!");
+        }
+    }else{
+        ROS_ERROR("Can't find space!!!");
     }
     if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0)){
-        draw(cv_ptr->image,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
+        //objectdet_distance(Blue_center[0], Blue_center[1], Blue_LR, Blue_angle, Blue_dis);
+    }else{
+        ROS_ERROR("Can't find bluedoor!!!");
     }
     if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0)){
-        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
+        //objectdet_distance(Yellow_center[0], Yellow_center[1], Yellow_LR, Yellow_angle, Yellow_dis);
+    }else{
+        ROS_ERROR("Can't find yellowdoor!!!");
     }
 
+    if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0))
+        draw(cv_ptr->image,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
+    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0))
+        draw(cv_ptr->image,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
+    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0))
+        draw(cv_ptr->image,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
+    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
+        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
 
-//    cv::imshow("Redmap", Redmap);
-//    cv::imshow("Greenmap", Greenmap);
-//    cv::imshow("Bluemap", Bluemap);
-//    cv::imshow("Yellowmap", Yellowmap);
-   cv::imshow("Image", cv_ptr->image);
-   cv::waitKey(10);
-    
+    cv::imshow("Image", cv_ptr->image);
+    cv::waitKey(10);
+    int EndTime = ros::Time::now().toNSec();
+    double fps = 1000000000/(EndTime - StartTime);
+    if(core_num<100){
+        fps_num[core_num] = fps;
+        cout<<core_num<<endl;
+        core_num++;
+    }
+    if(core_num==100){
+        fps_avg = 0;
+        for(int i=0;i<100;i++){
+            fps_avg += fps_num[i];
+        }
+        fps_avg = fps_avg/100;
+        cout<<"FPS_avg : "<<fps_avg<<endl;
+    }
 }
 vector<BYTE> ImageConverter::ColorFile()
 {
@@ -139,11 +178,23 @@ void ImageConverter::HSVmap(Mat frame, Mat Redmap, Mat Greenmap, Mat Bluemap, Ma
         }
     }
 }
+void ImageConverter::get_center(){
+    nh.getParam("/FIRA/Center/X",center_x);
+    nh.getParam("/FIRA/Center/Y",center_y);
+    nh.getParam("/FIRA/Center/Inner",center_inner);
+    nh.getParam("/FIRA/Center/Outer",center_outer);
+    nh.getParam("/FIRA/Center/Front",center_front);
+}
 void ImageConverter::get_scan(){
     nh.getParam("/FIRA/Scan/Parameter",scan_para);
     nh.getParam("/FIRA/Scan/Near",scan_near);
     nh.getParam("/FIRA/Scan/Middle",scan_middle);
     nh.getParam("/FIRA/Scan/Far",scan_far);
+}
+void ImageConverter::get_distance(){
+    nh.getParam("/FIRA/Distance/Gap",dis_gap);
+    nh.getParam("/FIRA/Distance/Space",dis_space);
+    nh.getParam("/FIRA/Distance/Pixel",dis_pixel);
 }
 void ImageConverter::objectdet(Mat frame, int &x_max, int &x_min, int &y_max, int &y_min){
     int neardis   = (scan_para[3]-scan_para[0])/scan_para[2]*2;
@@ -224,8 +275,6 @@ void ImageConverter::objectdet(Mat frame, int &x_max, int &x_min, int &y_max, in
                 if(y_max<y)y_max=near_point[i+point_bef];
                 if(y_min>y)y_min=near_point[i+point_bef];
             }
-            //draw(frame, x_max, x_min, y_max, y_min);
-
         }else if(objectnum_max[0]==2){
             for(int i=0;i<objectnum_max[1];i++)
                 point_bef += middle_num[i]*2;
@@ -241,7 +290,6 @@ void ImageConverter::objectdet(Mat frame, int &x_max, int &x_min, int &y_max, in
                 if(y_max<y)y_max=middle_point[i+point_bef];
                 if(y_min>y)y_min=middle_point[i+point_bef];
             }
-            //draw(frame, x_max, x_min, y_max, y_min);
         }else if(objectnum_max[0]==3){
             for(int i=0;i<objectnum_max[1];i++)
                 point_bef += far_num[i]*2;
@@ -257,7 +305,6 @@ void ImageConverter::objectdet(Mat frame, int &x_max, int &x_min, int &y_max, in
                 if(y_max<y)y_max=far_point[i+point_bef];
                 if(y_min>y)y_min=far_point[i+point_bef];
             }
-            //draw(frame, x_max, x_min, y_max, y_min);
         }
     }else{
         x_max = 0;x_min = 0;y_max = 0;y_min = 0;
@@ -474,13 +521,17 @@ void ImageConverter::place_case(Mat frame, int &x_max, int &x_min, int &y_max, i
             place_point.push_back(scan_far[i+1]);
         }
     }
-    x_max = place_point[1]; x_min = place_point[1];
-    y_max = place_point[0]; y_min = place_point[0];
-    for(int i=0;i<place_point.size();i+=2){
-        if(x_max<place_point[i+1])x_max=place_point[i+1];
-        if(x_min>place_point[i+1])x_min=place_point[i+1];
-        if(y_max<place_point[i])y_max=place_point[i];
-        if(y_min>place_point[i])y_min=place_point[i];
+    if(!place_point.empty()){
+        x_max = place_point[1]; x_min = place_point[1];
+        y_max = place_point[0]; y_min = place_point[0];
+        for(int i=0;i<place_point.size();i+=2){
+            if(x_max<place_point[i+1])x_max=place_point[i+1];
+            if(x_min>place_point[i+1])x_min=place_point[i+1];
+            if(y_max<place_point[i])y_max=place_point[i];
+            if(y_min>place_point[i])y_min=place_point[i];
+        }
+    }else{
+        x_max = 0;x_min = 0;y_max = 0;y_min = 0;
     }
 }
 void ImageConverter::objectdet_color(Mat frame, Mat Redmap, Mat Greenmap, Mat Bluemap, Mat Yellowmap )
@@ -520,6 +571,54 @@ void ImageConverter::objectdet_color(Mat frame, Mat Redmap, Mat Greenmap, Mat Bl
                 frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
 			}
 		}
-	}
+    }
+}
+void ImageConverter::objectdet_distance(int object_x, int object_y, string &object_LR, int &objct_angle_space, int &object_dis){
+    object_x = center_y - object_x;
+    object_y -= center_x;
+    int Dis=hypot(abs(object_x),abs(object_y));
+    int Dis_sm,Dis_bi,dis_num;
+    int object_ang = atan2(object_x,object_y)*180/PI;
+    if(object_ang<0)object_ang+=360;
+    double dis_ratio;
+    Dis_sm = dis_pixel[0];
+    Dis_bi = dis_pixel[0];
+    if(Dis>dis_pixel[dis_pixel.size()-1]){
+        object_dis = dis_space[dis_space.size()-1];
+    }else{
+        for(int i=1;i<dis_pixel.size();i++){
+            if(dis_pixel[i]<Dis)Dis_sm = dis_pixel[i];
+            if(dis_pixel[i]>Dis){
+                dis_num = i;
+                Dis_bi = dis_pixel[i];
+                break;
+            }
+        }
+        dis_ratio = (double)(Dis-Dis_sm)/(double)(Dis_bi-Dis_sm)*(double)dis_gap;
+        object_dis = dis_space[dis_num-1] + (int)dis_ratio;
+    }
+    if(center_front<=180){
+        if(object_ang>(center_front+180)){
+            object_LR = "Right";
+            objct_angle_space = 360 - object_ang + center_front;
+        }else if(object_ang<center_front){
+            object_LR = "Right";
+            objct_angle_space = center_front - object_ang;
+        }else{
+            object_LR = "Left";
+            objct_angle_space = object_ang - center_front;
+        }
+    }else{
+        if(object_ang<(center_front-180)){
+            object_LR = "Left";
+            objct_angle_space = object_ang + (360-center_front);
+        }else if(object_ang>center_front){
+            object_LR = "Left";
+            objct_angle_space = object_ang - center_front;
+        }else{
+            object_LR = "Right";
+            objct_angle_space = center_front - object_ang;
+        }
+    }
 }
 

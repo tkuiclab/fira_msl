@@ -9,10 +9,6 @@
 #define YELLOWITEM 0x08
 
 #define FILE_PATH"/tmp/HSVcolormap.bin"
-#define IMAGE_TEST1 "src/vision/resources/1.bmp"
-#define IMAGE_TEST2 "src/vision/resources/2.bmp"
-#define IMAGE_TEST3 "src/vision/resources/3.bmp"
-#define IMAGE_TEST4 "src/vision/resources/4.bmp"
 using namespace std;
 using namespace cv;
 
@@ -26,31 +22,32 @@ interface_window::interface_window(QInterface *node, QWidget *parent) :
     startTimer(10);
 /////////////////////////////////中心點前置參數////////////////////////////
     interface->get_center();
-    if(interface->center_g_x != 0){
-        ui->Slider_X->setValue(interface->center_g_x);
-        ui->Slider_Y->setValue(interface->center_g_y);
-        ui->Slider_Inner->setValue(interface->center_g_inner);
-        ui->Slider_Outer->setValue(interface->center_g_outer);
-        ui->Slider_Front->setValue(interface->center_g_front);
+    if(interface->center_get_x != 0){
+        ui->Slider_X->setValue(interface->center_get_x);
+        ui->Slider_Y->setValue(interface->center_get_y);
+        ui->Slider_Inner->setValue(interface->center_get_inner);
+        ui->Slider_Outer->setValue(interface->center_get_outer);
+        ui->Slider_Front->setValue(interface->center_get_front);
     }
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////掃瞄點前置參數////////////////////////////
     interface->get_scan();
-    if(!interface->scan_g_para.empty()){
-        ui->Scane_NEARGAP->setValue(interface->scan_g_para[0]);
-        ui->Scane_NEARANGLE->setValue(interface->scan_g_para[1]);
-        ui->Scane_NEARPIXEL->setValue(interface->scan_g_para[2]);
-        ui->Scane_MIDDLEGAP->setValue(interface->scan_g_para[3]);
-        ui->Scane_MIDDLEPIXEL->setValue(interface->scan_g_para[4]);
-        ui->Scane_FARGAP->setValue(interface->scan_g_para[5]);
-        ui->Scane_FARPIXEL->setValue(interface->scan_g_para[6]);
-        ui->Scane_ENDGAP->setValue(interface->scan_g_para[7]);
+    if(!interface->scan_get_para.empty()){
+        ui->Scane_NEARGAP->setValue(interface->scan_get_para[0]);
+        ui->Scane_NEARANGLE->setValue(interface->scan_get_para[1]);
+        ui->Scane_NEARPIXEL->setValue(interface->scan_get_para[2]);
+        ui->Scane_MIDDLEGAP->setValue(interface->scan_get_para[3]);
+        ui->Scane_MIDDLEPIXEL->setValue(interface->scan_get_para[4]);
+        ui->Scane_FARGAP->setValue(interface->scan_get_para[5]);
+        ui->Scane_FARPIXEL->setValue(interface->scan_get_para[6]);
+        ui->Scane_ENDGAP->setValue(interface->scan_get_para[7]);
     }
 //////////////////////////////////////////////////////////////////////////
 ///////////////////////////////距離前置參數/////////////////////////////////
     ui->Dis_comboBox->addItem(" File ");
     ui->Dis_space_value->setNum(ui->Dis_space->value());
     ui->Dis_num_value->setNum(ui->Dis_num->value());
+    for(int i=0;i<100;i++) distance_pixel[i] = 0;
     for(int i=0;i<ui->Dis_num->value();i++){
         distance_space[i]=i*ui->Dis_space->value();
     }
@@ -97,8 +94,8 @@ void interface_window::timerEvent(QTimerEvent *)
     int front = ui->Slider_Front->value();
     if(ros::ok()){
         if(interface->cv_ptr != NULL){
-            frame = cv::imread( IMAGE_TEST4 , CV_LOAD_IMAGE_COLOR );
-            //frame = interface->cv_ptr->image;
+            //frame = cv::imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
+            frame = interface->cv_ptr->image;
             double frame_HSV[frame.rows*frame.cols*3];
             if(ui->tabModel->currentIndex()==0){
 
@@ -114,7 +111,7 @@ void interface_window::timerEvent(QTimerEvent *)
                 Scan(frame, center_x, center_y);
             }
             else if(ui->tabModel->currentIndex()==3){
-
+               Distance_draw(frame, center_x, center_y);
             }
             else if(ui->tabModel->currentIndex()==4){
                 if(ui->tabColor->currentIndex()==0){
@@ -200,6 +197,9 @@ void interface_window::Center(Mat frame, int center_x, int center_y,
     }
     ui->Center_X_num->setText(QString("%1").arg(ui->Slider_X->value()));
     ui->Center_Y_num->setText(QString("%1").arg(ui->Slider_Y->value()));
+    ui->Inner_num->setText(QString("%1").arg(ui->Slider_Inner->value()));
+    ui->Outer_num->setText(QString("%1").arg(ui->Slider_Outer->value()));
+    ui->Front_num->setText(QString("%1").arg(ui->Slider_Front->value()));
 }
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////掃描參數///////////////////////////////////
@@ -322,6 +322,8 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
         scan_para.push_back(ui->Scane_ENDGAP->value());
         interface->sent_scan(scan_para, scan_near, scan_middle, scan_far);
         ui->Scane_Sent->setDown(0);
+        scan_para.clear();scan_near.clear();
+        scan_middle.clear();scan_far.clear();
     }
 }
 ////////////////////////////////////////////////////////////////////////
@@ -379,6 +381,54 @@ void interface_window::dis_combox_and_list_renew()
                                     + " cm -> " + QString::number(distance_pixel[i]));
     }
 }
+ void interface_window::Distance_draw(Mat frame, int center_x, int center_y){
+     for(int i=0;i<distance_pixel[ui->Dis_num->value()-1];i++){
+         frame.data[(center_y*frame.cols*3)+((center_x+i)*3)+0] = 0;
+         frame.data[(center_y*frame.cols*3)+((center_x+i)*3)+1] = 255;
+         frame.data[(center_y*frame.cols*3)+((center_x+i)*3)+2] = 0;
+
+         frame.data[(center_y*frame.cols*3)+((center_x-i)*3)+0] = 0;
+         frame.data[(center_y*frame.cols*3)+((center_x-i)*3)+1] = 255;
+         frame.data[(center_y*frame.cols*3)+((center_x-i)*3)+2] = 0;
+
+         frame.data[((center_y+i)*frame.cols*3)+(center_x*3)+0] = 0;
+         frame.data[((center_y+i)*frame.cols*3)+(center_x*3)+1] = 255;
+         frame.data[((center_y+i)*frame.cols*3)+(center_x*3)+2] = 0;
+
+         frame.data[((center_y-i)*frame.cols*3)+(center_x*3)+0] = 0;
+         frame.data[((center_y-i)*frame.cols*3)+(center_x*3)+1] = 255;
+         frame.data[((center_y-i)*frame.cols*3)+(center_x*3)+2] = 0;
+     }
+     for(int i=1;i<ui->Dis_num->value();i++){
+         for(int j=-5;j<=5;j++){
+             frame.data[((center_y+j)*frame.cols*3)+((center_x+distance_pixel[i])*3)+0] = 0;
+             frame.data[((center_y+j)*frame.cols*3)+((center_x+distance_pixel[i])*3)+1] = 255;
+             frame.data[((center_y+j)*frame.cols*3)+((center_x+distance_pixel[i])*3)+2] = 0;
+
+             frame.data[((center_y+j)*frame.cols*3)+((center_x-distance_pixel[i])*3)+0] = 0;
+             frame.data[((center_y+j)*frame.cols*3)+((center_x-distance_pixel[i])*3)+1] = 255;
+             frame.data[((center_y+j)*frame.cols*3)+((center_x-distance_pixel[i])*3)+2] = 0;
+
+             frame.data[((center_y+distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+0] = 0;
+             frame.data[((center_y+distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+1] = 255;
+             frame.data[((center_y+distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+2] = 0;
+
+             frame.data[((center_y-distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+0] = 0;
+             frame.data[((center_y-distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+1] = 255;
+             frame.data[((center_y-distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+2] = 0;
+         }
+     }
+     if(ui->dis_para->isDown() ==true){
+
+         for(int i=0;i<ui->Dis_num->value();i++){
+             dis_space.push_back(distance_space[i]);
+             dis_pixel.push_back(distance_pixel[i]);
+         }
+        interface->sent_dis(ui->Dis_space->value(),dis_space,dis_pixel);
+        ui->dis_para->setDown(0);
+        dis_space.clear();dis_pixel.clear();
+     }
+ }
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////RGBtoHSV///////////////////////////////////
 void interface_window::RGBtoHSV(Mat frame, double *frame_HSV)
