@@ -19,7 +19,7 @@ def main():
 
     # Construct state machine
     game_state_sm = StateMachine(
-            outcomes=['goal', 'game_start', 'aborted','preempted'],
+            outcomes=['succeeded', 'aborted','preempted'],
             input_keys = ['game_state'])
 
     game_state_sm.set_initial_state(['GAME_STATE'])
@@ -28,18 +28,26 @@ def main():
         StateMachine.add('GAME_STATE',
                 CBState(cb = lambda ud: ud.game_state,
                     input_keys = ['game_state'],
-                    outcomes = ['kick_off', 'free_kick', 'free_ball', 'no_state']),
+                    outcomes = ['kick_off', 'free_kick', 'free_ball', 'penalty_kick', 'goalkeeper_kick', 'no_state']),
                 transitions = {
-                    'kick_off': 'game_start',
+                    'kick_off': 'aborted',
                     'free_kick': 'FREE_KICK',
                     'free_ball': 'FREE_BALL',
-                    'no_state': 'aborted'})
+                    'penalty_kick': 'PENALTY_KICK',
+                    'goalkeeper_kick': 'GOALKEEPER_KICK',
+                    'no_state': 'preempted'})
         StateMachine.add('FREE_KICK',
                 SimpleActionState('free_kick', TestAction),
-                {'succeeded': 'goal'})
+                {'succeeded': 'succeeded', 'aborted': 'aborted'})
         StateMachine.add('FREE_BALL',
                 SimpleActionState('free_ball', TestAction),
-                {'succeeded': 'goal'})
+                {'succeeded': 'succeeded', 'aborted': 'aborted'})
+        StateMachine.add('PENALTY_KICK',
+                SimpleActionState('penalty_kick', TestAction),
+                {'succeeded': 'succeeded', 'aborted': 'aborted'})
+        StateMachine.add('GOALKEEPER_KICK',
+                SimpleActionState('goalkeeper_kick', TestAction),
+                {'succeeded': 'succeeded', 'aborted': 'aborted'})
 
 
     # Run state machine introspection server
@@ -49,7 +57,7 @@ def main():
     # Run state machine action server
     sms = ActionServerWrapper(
             'game_state', GameStateAction, game_state_sm,
-            succeeded_outcomes = ['goal', 'game_start'],
+            succeeded_outcomes = ['succeeded'],
             aborted_outcomes = ['aborted'],
             preempted_outcomes = ['preempted'],
             goal_slots_map = {'game_state':'game_state'},
