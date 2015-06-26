@@ -1,3 +1,4 @@
+<?xml version="1.0" ?>
 <launch>
     <node name="robot_tf2_broadcaster" pkg="world_model" type="object_tf2_broadcaster.py" respawn="false" output="screen" >
       <param name="object_name" type="string" value="fira_msl1" />

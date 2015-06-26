@@ -35,7 +35,7 @@ def main():
 
         StateMachine.add('CHASE_BALL',
                 SimpleActionState('chase_ball', TestAction),
-                { 'succeeded':'succeeded' })
+                { 'succeeded':'succeeded', 'aborted': 'SEARCH_BALL' })
 
 
 

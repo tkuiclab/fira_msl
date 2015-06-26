@@ -17,7 +17,7 @@ class RefServer (object):
         self._ac = SimpleActionClient('move_in_line', MovingByPoseAction)
         self._ac.wait_for_server()
 
-        rospy.loginfo("Creating ActionServer [%s]", name)
+        rospy.logdebug("Creating ActionServer [%s]", name)
 
     def goal_cb(self):
         self._as.accept_new_goal()

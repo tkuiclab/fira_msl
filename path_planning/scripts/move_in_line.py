@@ -32,7 +32,7 @@ class MoveInLine:
         self.tf_listener = tf2_ros.TransformListener(self.tf_buff)
         self.pub = rospy.Publisher("/fira_msl1/cmd_vel", Twist, queue_size=1)
 
-        rospy.loginfo("Creating ActionServer [%s]", name)
+        rospy.logdebug("Creating ActionServer [%s]", name)
 
     def execute_cb(self, goal):
         rate = rospy.Rate(100.0)

@@ -14,7 +14,8 @@ class RefServer (object):
         self.tf_lisener = tf2_ros.TransformListener(self.tf_buff)
         self._as = SimpleActionServer(name, TestAction, execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
-        rospy.loginfo("Creating ActionServer [%s]", name)
+
+        rospy.logdebug("Creating ActionServer [%s]", name)
 
     def execute_cb(self, goal):
         rate = rospy.Rate(10)

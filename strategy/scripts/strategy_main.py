@@ -13,16 +13,16 @@ class StrategyMain:
 
         self.game_state_client = SimpleActionClient('game_state', GameStateAction)
         if self.game_state_client.wait_for_server(rospy.Duration(120.0)):
-            rospy.loginfo("Recharge action web adapter connected to recharge action server.")
+            rospy.loginfo("Waiting for game_state...")
         else:
-            rospy.logerr("Recharge action web adapter timed out while waiting for recharge action server.")
+            rospy.logerr("game_state connect error")
             raise Exception()
 
         self.role_selector_client = SimpleActionClient('role_selector', RoleAction)
         if self.role_selector_client.wait_for_server(rospy.Duration(120.0)):
-            rospy.loginfo("Recharge action web adapter connected to recharge action server.")
+            rospy.loginfo("Waiting for role_selector...")
         else:
-            rospy.logerr("Recharge action web adapter timed out while waiting for recharge action server.")
+            rospy.logerr("role_selector connect error")
             raise Exception()
 
         rospy.Subscriber('/world_model', String, self.world_model_cb)
