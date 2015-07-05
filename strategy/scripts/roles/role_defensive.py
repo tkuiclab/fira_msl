@@ -33,10 +33,10 @@ def main():
 
         StateMachine.add('CHASE_BALL',
                 SimpleActionState('bhv_chase_ball', TestAction),
-                { 'succeeded':'DASH', 'aborted': 'SEARCH_BALL' })
+                { 'succeeded':'BLOCK_ENEMY', 'aborted': 'SEARCH_BALL' })
 
-        StateMachine.add('DASH',
-                SimpleActionState('bhv_dash', TestAction),
+        StateMachine.add('BLOCK_ENEMY',
+                SimpleActionState('bhv_block_enemy', TestAction),
                 { 'succeeded':'succeeded', 'aborted': 'SEARCH_BALL' })
 
 
@@ -60,3 +60,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
