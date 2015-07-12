@@ -3,6 +3,7 @@ import rospy
 import tf
 import tf2_ros
 import tf2_geometry_msgs
+import math
 
 from actionlib import *
 from actionlib.msg import TestAction
@@ -36,7 +37,9 @@ class RefServer (object):
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             pass
 
-        self._ac.send_goal(MovingByPoseGoal('BlueGoal', Pose2D(0, target.point.y, 0), 0.3), done_cb=self.done_cb)
+        self._ac.send_goal(
+                MovingByPoseGoal('BlueGoal', Pose2D(0, target.point.y, math.atan2(target.point.y, target.point.x)), 0.1),
+                done_cb=self.done_cb)
 
     def preempt_cb(self):
         self._as.set_preempted()
