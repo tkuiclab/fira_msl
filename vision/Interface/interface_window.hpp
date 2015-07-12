@@ -48,6 +48,9 @@ protected:
 
 private Q_SLOTS:
     void Showimg(cv::Mat);
+    void on_Slider_Exposure_valueChanged(int value);
+    void on_Slider_White_R_valueChanged(int value);
+    void on_Slider_White_B_valueChanged(int value);
     void Center(cv::Mat, int, int, int, int, int );
     void Scan(cv::Mat, int, int);
     void mouseMoveEvent(QMouseEvent *event);
@@ -67,9 +70,10 @@ private Q_SLOTS:
     uchar * HSV_PrintAngle();
     uchar * HSV_PrintBackground();
     void Draw_inner_outer_circle(cv::Mat , int , int ,int , int );
-    void White_Line(cv::Mat , int , int ,int , int );
-    void Black_Line(cv::Mat , int , int ,int , int );
+    void White_Line(cv::Mat ,int, int , int ,int , int );
+    void Black_Line(cv::Mat , int, int, int ,int , int );
     void Draw_Front_Line(cv::Mat , int , int ,int );
+    void Data_check(cv::Mat ,int ,int);
 
 Q_SIGNALS:
     void Mouse_pressed();

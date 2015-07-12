@@ -6,13 +6,12 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <fstream>
 #include <deque>
+#include <vision/Object.h>
 
 namespace enc = sensor_msgs::image_encodings;
 using namespace std;
 using namespace cv;
 typedef unsigned char BYTE;
-
-static const char WINDOW[] = "Image window";
 
 class ImageConverter
 {
@@ -20,7 +19,7 @@ private:
     ros::NodeHandle nh;
     image_transport::ImageTransport it_;
     image_transport::Subscriber image_sub_;
-    image_transport::Publisher image_pub_;
+    ros::Publisher object_pub;
 
     vector<BYTE> color_map;
     int center_x, center_y, center_inner, center_outer, center_front;

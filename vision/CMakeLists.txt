@@ -33,14 +33,12 @@ rosbuild_prepare_qt4(QtCore QtGui) # Add the appropriate components to the compo
 #add_service_files(DIRECTORY srv FILES TwoInts.srv)
 add_service_files(
   FILES
-  MSN.srv
 )
 add_message_files(
   FILES
-  Info.msg
+  Object.msg
 )
 generate_messages(DEPENDENCIES std_msgs)
-
 catkin_package(CATKIN_DEPENDS message_runtime std_msgs roscpp 
 		sensor_msgs cv_bridge image_transport)
 
@@ -51,8 +49,10 @@ catkin_package(CATKIN_DEPENDS message_runtime std_msgs roscpp
 foreach(subdir
     common
     Interface
-    prosilica_show
-    )
+    objectdetection
+    whiteLine
+    blackItem
+)
   #install(DIRECTORY ${subdir} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/qt_tutorials)
   add_subdirectory(${subdir})
 endforeach()

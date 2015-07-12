@@ -1,4 +1,4 @@
-#include "image_converter.hpp"
+ #include "image_converter.hpp"
 #include "math.h"
 
 #define PI 3.14159265
@@ -7,6 +7,7 @@
 #define BLUEITEM 0x04
 #define YELLOWITEM 0x08
 #define FILE_PATH "/tmp/HSVcolormap.bin"
+#define IMAGE_TEST1 "src/vision/1.bmp"
 
 using namespace std;
 using namespace cv;
@@ -15,8 +16,8 @@ typedef unsigned char BYTE;
 ImageConverter::ImageConverter()
    :it_(nh)
 {
-    image_pub_ = it_.advertise("/Image_pkg/Show_image", 1);
     image_sub_ = it_.subscribe("/camera/image_raw", 1, &ImageConverter::imageCb, this);
+    object_pub = nh.advertise<vision::Object>("/vision/object",1);
 
     color_map = ColorFile();
     get_center();
@@ -67,11 +68,17 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     Yellow_center[0] = (Yellowmap_x_max+Yellowmap_x_min)/2;
     Yellow_center[1] = (Yellowmap_y_max+Yellowmap_y_min)/2;
 
+    vision::Object object_msg;
     if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0)){
         if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0)){
             if( (Red_center[0]>Greenmap_x_min) && (Red_center[0]<Greenmap_x_max)
               &&(Red_center[1]>Greenmap_y_min) && (Red_center[1]<Greenmap_y_max) ){
                 objectdet_distance(Red_center[0], Red_center[1], Red_LR, Red_angle, Red_dis);
+                object_msg.ball_x = Red_center[1];
+                object_msg.ball_y = Red_center[0];
+                object_msg.ball_LR = Red_LR;
+                object_msg.ball_ang = Red_angle;
+                object_msg.ball_dis = Red_dis;
             }else{
                 ROS_ERROR("Can't find ball!!!");
             }
@@ -82,32 +89,44 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
         ROS_ERROR("Can't find space!!!");
     }
     if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0)){
-        //objectdet_distance(Blue_center[0], Blue_center[1], Blue_LR, Blue_angle, Blue_dis);
+        objectdet_distance(Blue_center[0], Blue_center[1], Blue_LR, Blue_angle, Blue_dis);
+        object_msg.blue_x = Blue_center[1];
+        object_msg.blue_y = Blue_center[0];
+        object_msg.blue_LR = Blue_LR;
+        object_msg.blue_ang = Blue_angle;
+        object_msg.blue_dis = Blue_dis;
     }else{
         ROS_ERROR("Can't find bluedoor!!!");
     }
     if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0)){
-        //objectdet_distance(Yellow_center[0], Yellow_center[1], Yellow_LR, Yellow_angle, Yellow_dis);
+        objectdet_distance(Yellow_center[0], Yellow_center[1], Yellow_LR, Yellow_angle, Yellow_dis);
+        object_msg.yellow_x = Yellow_center[1];
+        object_msg.yellow_y = Yellow_center[0];
+        object_msg.yellow_LR = Yellow_LR;
+        object_msg.yellow_ang = Yellow_angle;
+        object_msg.yellow_dis = Yellow_dis;
     }else{
         ROS_ERROR("Can't find yellowdoor!!!");
     }
+    /////////////////////Show view/////////////////
+//    if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0))
+//        draw(cv_ptr->image,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
+//    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0))
+//        draw(cv_ptr->image,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
+//    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0))
+//        draw(cv_ptr->image,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
+//    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
+//        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
 
-    if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0))
-        draw(cv_ptr->image,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
-    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0))
-        draw(cv_ptr->image,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
-    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0))
-        draw(cv_ptr->image,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
-    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
-        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
-
-    cv::imshow("Image", cv_ptr->image);
-    cv::waitKey(10);
+//    cv::imshow("Image", cv_ptr->image);
+//    cv::waitKey(10);
+    ///////////////////////////////////////////////
+    /////////////////////FPS///////////////////////
     int EndTime = ros::Time::now().toNSec();
     double fps = 1000000000/(EndTime - StartTime);
     if(core_num<100){
         fps_num[core_num] = fps;
-        cout<<core_num<<endl;
+        //cout<<core_num<<endl;
         core_num++;
     }
     if(core_num==100){
@@ -116,8 +135,12 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
             fps_avg += fps_num[i];
         }
         fps_avg = fps_avg/100;
-        cout<<"FPS_avg : "<<fps_avg<<endl;
+        //cout<<"FPS_avg : "<<fps_avg<<endl;
+        object_msg.fps = fps_avg;
     }
+    ///////////////////////////////////////////////
+    object_pub.publish(object_msg);
+    ros::spinOnce();
 }
 vector<BYTE> ImageConverter::ColorFile()
 {
@@ -594,8 +617,14 @@ void ImageConverter::objectdet_distance(int object_x, int object_y, string &obje
                 break;
             }
         }
-        dis_ratio = (double)(Dis-Dis_sm)/(double)(Dis_bi-Dis_sm)*(double)dis_gap;
-        object_dis = dis_space[dis_num-1] + (int)dis_ratio;
+        if(Dis == dis_pixel[dis_num-1]){
+            object_dis = dis_space[dis_num-1];
+        }else if(Dis == dis_pixel[dis_num]){
+            object_dis = dis_space[dis_num];
+        }else{
+            dis_ratio = (double)(Dis-Dis_sm)/(double)(Dis_bi-Dis_sm)*(double)dis_gap;
+            object_dis = dis_space[dis_num-1] + (int)dis_ratio;
+        }
     }
     if(center_front<=180){
         if(object_ang>(center_front+180)){

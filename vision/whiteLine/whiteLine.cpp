@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "Show_image");
+  ros::init(argc, argv, "whiteLine");
   ImageConverter ic;
   ros::spin();
   return 0;

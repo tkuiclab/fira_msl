@@ -9,6 +9,7 @@
 #define YELLOWITEM 0x08
 
 #define FILE_PATH"/tmp/HSVcolormap.bin"
+#define IMAGE_TEST1 "src/vision/1.bmp"
 using namespace std;
 using namespace cv;
 
@@ -94,11 +95,13 @@ void interface_window::timerEvent(QTimerEvent *)
     int front = ui->Slider_Front->value();
     if(ros::ok()){
         if(interface->cv_ptr != NULL){
-            //frame = cv::imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
             frame = interface->cv_ptr->image;
+            //frame = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
             double frame_HSV[frame.rows*frame.cols*3];
             if(ui->tabModel->currentIndex()==0){
-
+                ui->Exposure_num->setText(QString("%1").arg(ui->Slider_Exposure->value()));
+                ui->White_num_R->setText(QString("%1").arg(ui->Slider_White_R->value()));
+                ui->White_num_B->setText(QString("%1").arg(ui->Slider_White_B->value()));
             }
             else if(ui->tabModel->currentIndex()==1){//中心點
                 Center(frame, center_x, center_y, inner, outer, front);
@@ -125,36 +128,59 @@ void interface_window::timerEvent(QTimerEvent *)
                     }
                 }
                 else if(ui->tabColor->currentIndex()==1){
-                    White_Line(frame,center_x,center_y,inner,outer);
+                    White_Line(frame,front,center_x,center_y,inner,outer);
                     Draw_inner_outer_circle(frame,center_x,center_y,inner,outer);
-                    Draw_Front_Line(frame,center_x,center_y,outer);
+                    Draw_Front_Line(frame,center_x,center_y,inner);
                 }
                 else if(ui->tabColor->currentIndex()==2){
-                    Black_Line(frame,center_x,center_y,inner,outer);
+                    Black_Line(frame,front,center_x,center_y,inner,outer);
                     Draw_inner_outer_circle(frame,center_x,center_y,inner,outer);
-                    Draw_Front_Line(frame,center_x,center_y,outer);
+                    Draw_Front_Line(frame,center_x,center_y,inner);
                 }
             }
             else if(ui->tabModel->currentIndex()==5){
-
+                Data_check(frame,center_x,center_y);
             }
-            if(ui->check_cam->isChecked())
-                Showimg(frame);
+            Showimg(frame);
         }
     }
 }
 ///////////////////////////////影像輸出////////////////////////////////////
 void interface_window::Showimg(Mat frame){
-    QImage img(frame.cols,frame.rows,QImage::Format_RGB888);
-    for(int i=0;i<frame.rows;i++){
-        for(int j=0;j<frame.cols;j++){
-            unsigned char B = frame.data[(i*frame.cols*3)+(j*3)+0];
-            unsigned char G = frame.data[(i*frame.cols*3)+(j*3)+1];
-            unsigned char R = frame.data[(i*frame.cols*3)+(j*3)+2];
-            img.setPixel(j,i,QColor(R,G,B).rgb());
+    if(ui->check_cam->isChecked()){
+        QImage img(frame.cols,frame.rows,QImage::Format_RGB888);
+        for(int i=0;i<frame.rows;i++){
+            for(int j=0;j<frame.cols;j++){
+                unsigned char B = frame.data[(i*frame.cols*3)+(j*3)+0];
+                unsigned char G = frame.data[(i*frame.cols*3)+(j*3)+1];
+                unsigned char R = frame.data[(i*frame.cols*3)+(j*3)+2];
+                img.setPixel(j,i,QColor(R,G,B).rgb());
+            }
         }
+        ui->Show_label->setPixmap(QPixmap::fromImage(img));
+    }else{
+        ui->Show_label->clear();
     }
-    ui->Show_label->setPixmap(QPixmap::fromImage(img));
+}
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////////攝影機/////////////////////////////////////
+void interface_window::on_Slider_Exposure_valueChanged(int value)
+{
+    interface->set_campara(ui->Slider_Exposure->value(),
+                           ui->Slider_White_R->value(),
+                           ui->Slider_White_B->value());
+}
+void interface_window::on_Slider_White_R_valueChanged(int value)
+{
+    interface->set_campara(ui->Slider_Exposure->value(),
+                           ui->Slider_White_R->value(),
+                           ui->Slider_White_B->value());
+}
+void interface_window::on_Slider_White_B_valueChanged(int value)
+{
+    interface->set_campara(ui->Slider_Exposure->value(),
+                           ui->Slider_White_R->value(),
+                           ui->Slider_White_B->value());
 }
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////////中心點/////////////////////////////////////
@@ -331,17 +357,17 @@ void interface_window::Scan(Mat frame, int center_x, int center_y){
 void interface_window::mouseMoveEvent(QMouseEvent *event)
 {
     mosue_x = event->x()-ui->frame_38->x()-ui->Slider_X->value();
-    mosue_y = event->y()-15-ui->Slider_Y->value();
+    mosue_y = -1*(event->y()-15-ui->Slider_Y->value());
     ui->mouse_X->setText(QString("%1").arg(mosue_x));
     ui->mouse_Y->setText(QString("%1").arg(mosue_y));
 }
 void interface_window::mousePressEvent(QMouseEvent *event)
 {
     mosue_x = event->x()-ui->frame_38->x()-ui->Slider_X->value();
-    mosue_y = event->y()-15-ui->Slider_Y->value();
+    mosue_y = -1*(event->y()-15-ui->Slider_Y->value());
     if(ui->tabModel->currentIndex()==3){
         if(ui->Dis_comboBox->currentIndex()!=0){
-            int Dis=hypot(abs(mosue_x),abs(mosue_y));
+            int Dis=hypot(mosue_x,mosue_y);
             distance_pixel[ui->Dis_comboBox->currentIndex()-1]=Dis;
             ui->Dis_listWidget->clear();
             for(int i=0;i<ui->Dis_num->value();i++){
@@ -865,39 +891,36 @@ uchar * interface_window::HSV_PrintBackground()
 }
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////White_Line///////////////////////////////
-void interface_window::White_Line(cv::Mat frame, int center_X, int center_Y,int inner, int outer)
+void interface_window::White_Line(cv::Mat frame, int front,int center_X, int center_Y,int inner, int outer)
 {
-    Mat Outimg(cv::Size(frame.cols,frame.rows),CV_8UC3);
     for(int i=0;i<frame.rows;i++){
         for(int j=0;j<frame.cols;j++){
             unsigned char gray = ( frame.data[(i*frame.cols*3)+(j*3)+0]
                                  + frame.data[(i*frame.cols*3)+(j*3)+1]
                                  + frame.data[(i*frame.cols*3)+(j*3)+2])/3;
             if(gray< ui->Slider_Gray->value() ){
-                Outimg.data[(i*Outimg.cols*3)+(j*3)+0] = 0;
-                Outimg.data[(i*Outimg.cols*3)+(j*3)+1] = 0;
-                Outimg.data[(i*Outimg.cols*3)+(j*3)+2] = 0;
+                frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
+                frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
+                frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
             }else{
-                Outimg.data[(i*Outimg.cols*3)+(j*3)+0] = 255;
-                Outimg.data[(i*Outimg.cols*3)+(j*3)+1] = 255;
-                Outimg.data[(i*Outimg.cols*3)+(j*3)+2] = 255;
+                frame.data[(i*frame.cols*3)+(j*3)+0] = 255;
+                frame.data[(i*frame.cols*3)+(j*3)+1] = 255;
+                frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
             }
         }
     }
-    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outimg.data[i];
     for(int a=0;a<360;a=a+ui->Slider_Angle->value()){
-        int angle_be = a;
+        int angle_be = a+front;
         if(angle_be>360)angle_be-=360;
-        if(angle_be<0) angle_be+=360;
         double angle_af = angle_be*M_PI/180;
         double x = cos(angle_af);
         double y = sin(angle_af);
         for(int r=inner;r<=outer;r++){
             int dis_x = x*r;
             int dis_y = y*r;
-            if(frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+0] ==255
-                    &&frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+1] ==255
-                    &&frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+2] ==255){
+            if( frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+0] == 255
+              &&frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+1] == 255
+              &&frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+2] == 255){
                 break;
             }else{
                 frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+0] = 0;
@@ -906,23 +929,14 @@ void interface_window::White_Line(cv::Mat frame, int center_X, int center_Y,int 
             }
         }
     }
-}
-void interface_window::Draw_inner_outer_circle(cv::Mat frame, int center_X, int center_Y,int inner, int outer)
-{
-    for(int i=0;i<frame.rows;i++){
-        for(int j=0;j<frame.cols;j++){
-            int dis = hypot(i-center_Y,j-center_X);
-            if((dis==inner)||(dis==outer)){
-                frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
-                frame.data[(i*frame.cols*3)+(j*3)+1] = 255;
-                frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
-            }
-        }
+    if(ui->White_sent->isDown()==true){
+        interface->sent_whiteline(ui->Slider_Gray->value(),ui->Slider_Angle->value());
+        ui->White_sent->setDown(0);
     }
 }
 ////////////////////////////////////////////////////////////////////////
-///////////////////////////////Black_Line///////////////////////////////
-void interface_window :: Black_Line(cv::Mat frame, int center_X, int center_Y,int inner, int outer)
+///////////////////////////////BlackItem///////////////////////////////
+void interface_window :: Black_Line(cv::Mat frame, int front,int center_X, int center_Y,int inner, int outer)
 {
     Mat Outimg(cv::Size(frame.cols,frame.rows),CV_8UC3);
     double gray_num[256] = {0};
@@ -967,20 +981,18 @@ void interface_window :: Black_Line(cv::Mat frame, int center_X, int center_Y,in
             }
         }
     }
-    for(int a=ui->Black_Angle_->value()/10;a<=360;a=a+ui->Black_Angle_->value()/10){
-        int angle_be = a;
+    for(int a=0;a<360;a=a+ui->Black_Angle_->value()){
+        int angle_be = a+front;
         if(angle_be>360)angle_be-=360;
-        if(angle_be<0) angle_be+=360;
         double angle_af = angle_be*M_PI/180;
         double x = cos(angle_af);
         double y = sin(angle_af);
         for(int r=inner;r<=outer;r++){
             int dis_x = x*r;
             int dis_y = y*r;
-            if(Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+0] ==0
-                    &&Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+1] ==0
-                    &&Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+2] ==0){
-
+            if( Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+0] == 0
+              &&Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+1] == 0
+              &&Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+2] == 0){
                 break;
             }else{
                 Outimg.data[((center_Y-dis_y)*Outimg.cols*3)+((center_X+dis_x)*3)+0] = 0;
@@ -990,18 +1002,89 @@ void interface_window :: Black_Line(cv::Mat frame, int center_X, int center_Y,in
         }
     }
     for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outimg.data[i];
+    if(ui->Black_savedata->isDown()==true){
+        interface->sent_blackItem(ui->Black_Gray->value(),ui->Black_Angle_->value());
+        ui->Black_savedata->setDown(0);
+    }
 }
 ////////////////////////////////////////////////////////////////////////
-void interface_window::Draw_Front_Line(cv::Mat frame, int center_X, int center_Y,int outer)
+///////////////////////////////資料顯示/////////////////////////////////////
+void interface_window::Data_check(Mat frame,int center_x,int center_y){
+    if(ui->checkBox->isChecked()){
+        ui->fps_showlabel->setText(QString("%1").arg(interface->image_fps));
+        ui->red_coordinate_showlabel->setText(QString("( %1 , %2 )").arg(interface->ball_x - center_x)
+                                                           .arg(center_y - interface->ball_y));
+        ui->red_LR->setText(QString(interface->ball_LR.c_str()));
+        ui->red_ang_showlabel->setText(QString("%1").arg(interface->ball_ang));
+        ui->red_dis_showlabel->setText(QString("%1").arg(interface->ball_dis));
+
+        ui->blue_coordinate_showlabel->setText(QString("( %1 , %2 )").arg(interface->blue_x - center_x)
+                                                             .arg(center_y - interface->blue_y));
+        ui->blue_LR->setText(QString(interface->blue_LR.c_str()));
+        ui->blue_ang_showlabel->setText(QString("%1").arg(interface->blue_ang));
+        ui->blue_dis_showlabel->setText(QString("%1").arg(interface->blue_dis));
+
+        ui->yellow_coordinate_showlabel->setText(QString("( %1 , %2 )").arg(interface->yellow_x - center_x)
+                                                               .arg(center_y - interface->yellow_y));
+        ui->yellow_LR->setText(QString(interface->yellow_LR.c_str()));
+        ui->yellow_ang_showlabel->setText(QString("%1").arg(interface->yellow_ang));
+        ui->yellow_dis_showlabel->setText(QString("%1").arg(interface->yellow_dis));
+
+        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+0] = 0;
+        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+1] = 255;
+        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+2] = 0;
+
+        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+0] = 0;
+        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+1] = 0;
+        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+2] = 255;
+
+        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+0] = 255;
+        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+1] = 0;
+        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+2] = 0;
+    }else{
+        ui->fps_showlabel->setText(QString("0"));
+        ui->red_coordinate_showlabel->setText(QString("0"));
+        ui->red_LR->setText(QString("NULL"));
+        ui->red_ang_showlabel->setText(QString("0"));
+        ui->red_dis_showlabel->setText(QString("0"));
+
+        ui->blue_coordinate_showlabel->setText(QString("0"));
+        ui->blue_LR->setText(QString("NULL"));
+        ui->blue_ang_showlabel->setText(QString("0"));
+        ui->blue_dis_showlabel->setText(QString("0"));
+
+        ui->yellow_coordinate_showlabel->setText(QString("0"));
+        ui->yellow_LR->setText(QString("NULL"));
+        ui->yellow_ang_showlabel->setText(QString("0"));
+        ui->yellow_dis_showlabel->setText(QString("0"));
+    }
+}
+/////////////////////////////////////////////////////////////////////////
+///////////////////////////////作圖//////////////////////////////////////
+void interface_window::Draw_inner_outer_circle(cv::Mat frame, int center_X, int center_Y,int inner, int outer)
+{
+    for(int i=0;i<frame.rows;i++){
+        for(int j=0;j<frame.cols;j++){
+            int dis = hypot(i-center_Y,j-center_X);
+            if((dis==inner)||(dis==outer)){
+                frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
+                frame.data[(i*frame.cols*3)+(j*3)+1] = 255;
+                frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
+            }
+        }
+    }
+}
+void interface_window::Draw_Front_Line(cv::Mat frame, int center_X, int center_Y,int inner)
 {
     double angle = ui->Slider_Front->value()*M_PI/180;
     double x = cos(angle);
     double y = sin(angle);
-    for(int r=0;r<outer;r++){
+    for(int r=0;r<inner;r++){
         int dis_x = x*r;
         int dis_y = y*r;
-        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+0] = 255;
-        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+1] = 0;
-        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+2] = 0;
+        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+0] = 0;
+        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+1] = 255;
+        frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+2] = 255;
     }
 }
+/////////////////////////////////////////////////////////////////////////

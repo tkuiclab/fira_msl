@@ -39,7 +39,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tab_1">
       <attribute name="title">
@@ -70,13 +70,13 @@
          </rect>
         </property>
         <property name="text">
-         <string>White</string>
+         <string>White_R</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
-       <widget class="QSlider" name="Slider_White">
+       <widget class="QSlider" name="Slider_White_R">
         <property name="geometry">
          <rect>
           <x>70</x>
@@ -84,6 +84,9 @@
           <width>160</width>
           <height>29</height>
          </rect>
+        </property>
+        <property name="minimum">
+         <number>80</number>
         </property>
         <property name="maximum">
          <number>300</number>
@@ -95,7 +98,7 @@
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
-       <widget class="QLabel" name="White_num">
+       <widget class="QLabel" name="White_num_R">
         <property name="geometry">
          <rect>
           <x>230</x>
@@ -153,13 +156,13 @@
          </rect>
         </property>
         <property name="minimum">
-         <number>3000</number>
+         <number>2500</number>
         </property>
         <property name="maximum">
          <number>30000</number>
         </property>
         <property name="value">
-         <number>8800</number>
+         <number>25000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -207,6 +210,76 @@
        <property name="text">
         <string>return</string>
        </property>
+      </widget>
+      <widget class="QFrame" name="frame_49">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>80</y>
+         <width>271</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>65</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>White_B</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QSlider" name="Slider_White_B">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>0</y>
+          <width>160</width>
+          <height>29</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>80</number>
+        </property>
+        <property name="maximum">
+         <number>300</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="QLabel" name="White_num_B">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>0</y>
+          <width>41</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>num</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
       </widget>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -1392,7 +1465,7 @@
         </rect>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_8">
         <attribute name="title">
@@ -2024,7 +2097,7 @@
            </rect>
           </property>
           <property name="minimum">
-           <number>10</number>
+           <number>1</number>
           </property>
           <property name="maximum">
            <number>360</number>
@@ -2033,7 +2106,7 @@
            <number>1</number>
           </property>
           <property name="value">
-           <number>30</number>
+           <number>3</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -2052,7 +2125,10 @@
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="value" stdset="0">
-           <double>30.000000000000000</double>
+           <double>3.000000000000000</double>
+          </property>
+          <property name="intValue" stdset="0">
+           <number>3</number>
           </property>
          </widget>
          <widget class="QLabel" name="label_angle">
@@ -2429,32 +2505,6 @@
         <string>( 0,0 )</string>
        </property>
       </widget>
-      <widget class="QLabel" name="green_dis_showlabel">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>291</y>
-         <width>51</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Obj_label_3">
-       <property name="geometry">
-        <rect>
-         <x>-1</x>
-         <y>268</y>
-         <width>81</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Green Obj :</string>
-       </property>
-      </widget>
       <widget class="Line" name="line_4">
        <property name="geometry">
         <rect>
@@ -2468,89 +2518,24 @@
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
-      <widget class="QLabel" name="green_ang_showlabel">
-       <property name="geometry">
-        <rect>
-         <x>228</x>
-         <y>291</y>
-         <width>66</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Dis_label_5">
-       <property name="geometry">
-        <rect>
-         <x>8</x>
-         <y>291</y>
-         <width>66</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Distance :</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="green_coordinate_showlabel">
-       <property name="geometry">
-        <rect>
-         <x>88</x>
-         <y>269</y>
-         <width>191</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>( 0,0 )</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="Ang_label_5">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>291</y>
-         <width>51</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Angle :</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="yellow_ang_showlabel">
        <property name="geometry">
         <rect>
-         <x>229</x>
-         <y>363</y>
+         <x>230</x>
+         <y>290</y>
          <width>66</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
         <string>0</string>
-       </property>
-      </widget>
-      <widget class="Line" name="line_9">
-       <property name="geometry">
-        <rect>
-         <x>1</x>
-         <y>321</y>
-         <width>311</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
       <widget class="QLabel" name="yellow_coordinate_showlabel">
        <property name="geometry">
         <rect>
-         <x>89</x>
-         <y>341</y>
+         <x>90</x>
+         <y>268</y>
          <width>191</width>
          <height>17</height>
         </rect>
@@ -2562,8 +2547,8 @@
       <widget class="QLabel" name="yellow_dis_showlabel">
        <property name="geometry">
         <rect>
-         <x>91</x>
-         <y>363</y>
+         <x>92</x>
+         <y>290</y>
          <width>51</width>
          <height>17</height>
         </rect>
@@ -2575,8 +2560,8 @@
       <widget class="QLabel" name="Ang_label_6">
        <property name="geometry">
         <rect>
-         <x>171</x>
-         <y>363</y>
+         <x>172</x>
+         <y>290</y>
          <width>51</width>
          <height>17</height>
         </rect>
@@ -2588,8 +2573,8 @@
       <widget class="QLabel" name="Dis_label_6">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>363</y>
+         <x>11</x>
+         <y>290</y>
          <width>66</width>
          <height>17</height>
         </rect>
@@ -2601,14 +2586,92 @@
       <widget class="QLabel" name="Obj_label_7">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>340</y>
+         <x>1</x>
+         <y>267</y>
          <width>81</width>
          <height>20</height>
         </rect>
        </property>
        <property name="text">
         <string>Yellow Obj :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="LR">
+       <property name="geometry">
+        <rect>
+         <x>172</x>
+         <y>130</y>
+         <width>51</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>LR :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="red_LR">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>130</y>
+         <width>66</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="LR_2">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>200</y>
+         <width>51</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>LR :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="blue_LR">
+       <property name="geometry">
+        <rect>
+         <x>228</x>
+         <y>200</y>
+         <width>66</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="LR_3">
+       <property name="geometry">
+        <rect>
+         <x>172</x>
+         <y>270</y>
+         <width>51</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>LR :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="yellow_LR">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>270</y>
+         <width>66</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </widget>

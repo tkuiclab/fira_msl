@@ -32,6 +32,12 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+#include <dynamic_reconfigure/DoubleParameter.h>
+#include <dynamic_reconfigure/Reconfigure.h>
+#include <dynamic_reconfigure/Config.h>
+
+#include <vision/Object.h>
 /*****************************************************************************
 ** Class
 *****************************************************************************/
@@ -48,10 +54,38 @@ public:
     virtual ~QInterface() {}
     void run();
     void ros_comms_init();
+    std::string  ball_LR,blue_LR,yellow_LR;
+    int image_fps;
+    int   ball_x, ball_y, ball_ang, ball_dis;
+    int   blue_x, blue_y,blue_ang, blue_dis;
+    int   yellow_x, yellow_y, yellow_ang, yellow_dis;
 
     void imageCb(const sensor_msgs::ImageConstPtr& msg);
+    void object_data(const vision::Object& msg);
     cv_bridge::CvImagePtr cv_ptr;
+    //-------------------camera-------------------------
+    void set_campara(int value_ex, int value_r, int value_b){
+        dynamic_reconfigure::ReconfigureRequest srv_req;
+        dynamic_reconfigure::ReconfigureResponse srv_resp;
+        dynamic_reconfigure::DoubleParameter double_param;
+        dynamic_reconfigure::IntParameter int_param;
+        dynamic_reconfigure::Config conf;
+        double exposure = (double)value_ex/1000000;
+        double_param.name = "exposure";
+        double_param.value = exposure;
+        conf.doubles.push_back(double_param);
 
+        int_param.name = "whitebalance_red";
+        int_param.value = value_r;
+        conf.ints.push_back(int_param);
+
+        int_param.name = "whitebalance_blue";
+        int_param.value = value_b;
+        conf.ints.push_back(int_param);
+
+        srv_req.config = conf;
+        ros::service::call("/prosilica_driver/set_parameters", srv_req, srv_resp);
+    }
     //-------------------center-------------------------
     void sent_center(int center_x, int center_y, int center_inner, int center_outer, int center_front){
         nh->setParam("/FIRA/Center/X",center_x);
@@ -104,6 +138,18 @@ public:
         nh->getParam("/FIRA/HSV/Yellowrange",Yellowmap);
     }
     //--------------------------------------------------
+    //----------------------whiteline-------------------
+    void sent_whiteline(int gray, int angle){
+        nh->setParam("/FIRA/whiteline/gray",gray);
+        nh->setParam("/FIRA/whiteline/angle",angle);
+    }
+    //--------------------------------------------------
+    //----------------------blackItem-------------------
+    void sent_blackItem(int gray, int angle){
+        nh->setParam("/FIRA/blackItem/gray",gray);
+        nh->setParam("/FIRA/blackItem/angle",angle);
+    }
+    //--------------------------------------------------
 
 Q_SIGNALS:
 
@@ -111,6 +157,7 @@ private:
     ros::NodeHandle *nh;
     image_transport::ImageTransport *it_;
     image_transport::Subscriber image_sub_;
+    ros::Subscriber object_sub;
 
 };
 
