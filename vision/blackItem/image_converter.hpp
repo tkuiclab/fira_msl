@@ -34,6 +34,7 @@ public:
     ~ImageConverter();
 
     void imageCb(const sensor_msgs::ImageConstPtr&);
+    void opposite(cv::Mat);
     void get_center();
     void get_distance();
     void get_whitedata();

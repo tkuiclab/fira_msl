@@ -49,6 +49,7 @@ public:
     void get_center();
     void get_scan();
     void get_distance();
+    void opposite(cv::Mat);
     void HSVmap(Mat, Mat, Mat, Mat, Mat);
     void objectdet(Mat, int &, int &, int &, int &);
     void objectdet_search(Mat , vector<int> &,deque<int> &, int , int, int );

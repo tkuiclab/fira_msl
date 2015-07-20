@@ -34,6 +34,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       return;
     }
     //cv_ptr->image = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
+    opposite(cv_ptr->image);
     double gray_num[256] = {0};
     int avg_new=0;
     int gray_sum = 0;
@@ -144,6 +145,17 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 //    cv::imshow("Image", cv_ptr->image);
 //    cv::waitKey(10);
     ///////////////////////////////////////////////
+}
+void ImageConverter::opposite(Mat frame){
+    Mat Outing(Size(frame.cols,frame.rows),CV_8UC3);
+    for(int i=0;i<frame.rows;i++){
+        for(int j=0;j<frame.cols;j++){
+            Outing.data[(i*Outing.cols*3)+(j*3)+0] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+0];
+            Outing.data[(i*Outing.cols*3)+(j*3)+1] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+1];
+            Outing.data[(i*Outing.cols*3)+(j*3)+2] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+2];
+        }
+    }
+    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outing.data[i];
 }
 void ImageConverter::get_center(){
     nh.getParam("/FIRA/Center/X",center_x);

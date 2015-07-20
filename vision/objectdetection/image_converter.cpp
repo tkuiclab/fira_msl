@@ -45,6 +45,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       return;
     }
     //cv_ptr->image = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
+    opposite(cv_ptr->image);
     Mat Redmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
     Mat Greenmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
     Mat Bluemap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
@@ -118,8 +119,8 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 //    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
 //        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
 
-//    cv::imshow("Image", cv_ptr->image);
-//    cv::waitKey(10);
+    //cv::imshow("Image", cv_ptr->image);
+    cv::waitKey(10);
     ///////////////////////////////////////////////
     /////////////////////FPS///////////////////////
     int EndTime = ros::Time::now().toNSec();
@@ -141,6 +142,17 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     ///////////////////////////////////////////////
     object_pub.publish(object_msg);
     ros::spinOnce();
+}
+void ImageConverter::opposite(Mat frame){
+    Mat Outing(Size(frame.cols,frame.rows),CV_8UC3);
+    for(int i=0;i<frame.rows;i++){
+        for(int j=0;j<frame.cols;j++){
+            Outing.data[(i*Outing.cols*3)+(j*3)+0] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+0];
+            Outing.data[(i*Outing.cols*3)+(j*3)+1] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+1];
+            Outing.data[(i*Outing.cols*3)+(j*3)+2] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+2];
+        }
+    }
+    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outing.data[i];
 }
 vector<BYTE> ImageConverter::ColorFile()
 {
@@ -610,7 +622,11 @@ void ImageConverter::objectdet_distance(int object_x, int object_y, string &obje
         object_dis = dis_space[dis_space.size()-1];
     }else{
         for(int i=1;i<dis_pixel.size();i++){
-            if(dis_pixel[i]<Dis)Dis_sm = dis_pixel[i];
+            if(dis_pixel[i]<Dis){
+                dis_num = i;
+                Dis_sm = dis_pixel[i];
+                Dis_bi = dis_pixel[i];
+            }
             if(dis_pixel[i]>Dis){
                 dis_num = i;
                 Dis_bi = dis_pixel[i];
@@ -629,10 +645,10 @@ void ImageConverter::objectdet_distance(int object_x, int object_y, string &obje
     if(center_front<=180){
         if(object_ang>(center_front+180)){
             object_LR = "Right";
-            objct_angle_space = 360 - object_ang + center_front;
+            objct_angle_space = -1*(360 - object_ang + center_front);
         }else if(object_ang<center_front){
             object_LR = "Right";
-            objct_angle_space = center_front - object_ang;
+            objct_angle_space = -1*(center_front - object_ang);
         }else{
             object_LR = "Left";
             objct_angle_space = object_ang - center_front;
@@ -646,8 +662,7 @@ void ImageConverter::objectdet_distance(int object_x, int object_y, string &obje
             objct_angle_space = object_ang - center_front;
         }else{
             object_LR = "Right";
-            objct_angle_space = center_front - object_ang;
+            objct_angle_space = -1*(center_front - object_ang);
         }
     }
 }
-
