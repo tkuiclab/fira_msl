@@ -110,16 +110,19 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
         ROS_ERROR("Can't find yellowdoor!!!");
     }
     /////////////////////Show view/////////////////
-//    if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0))
-//        draw(cv_ptr->image,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
-//    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0))
-//        draw(cv_ptr->image,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
-//    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0))
-//        draw(cv_ptr->image,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
-//    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
-//        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
-
-    //cv::imshow("Image", cv_ptr->image);
+    if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0))
+        draw(cv_ptr->image,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
+    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0))
+        draw(cv_ptr->image,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
+    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0))
+        draw(cv_ptr->image,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
+    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
+        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
+    cv::imshow("Image", cv_ptr->image);
+    cv::imshow("R", Redmap);
+    cv::imshow("G", Greenmap);
+    cv::imshow("B", Bluemap);
+    cv::imshow("Y", Yellowmap);
     cv::waitKey(10);
     ///////////////////////////////////////////////
     /////////////////////FPS///////////////////////

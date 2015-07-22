@@ -75,6 +75,7 @@ private Q_SLOTS:
     void Black_Line(cv::Mat , int, int, int ,int , int );
     void Draw_Front_Line(cv::Mat , int , int ,int );
     void Data_check(cv::Mat ,int ,int);
+    void Draw_cross(cv::Mat frame,char color);
 
 Q_SIGNALS:
     void Mouse_pressed();

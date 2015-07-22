@@ -164,7 +164,6 @@ void interface_window::opposite(Mat frame){
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////////影像輸出////////////////////////////////////
 void interface_window::Showimg(Mat frame){
-
     if(ui->check_cam->isChecked()){
         QImage img(frame.cols,frame.rows,QImage::Format_RGB888);
         for(int i=0;i<frame.rows;i++){
@@ -1048,17 +1047,20 @@ void interface_window::Data_check(Mat frame,int center_x,int center_y){
         ui->yellow_ang_showlabel->setText(QString("%1").arg(interface->yellow_ang));
         ui->yellow_dis_showlabel->setText(QString("%1").arg(interface->yellow_dis));
 
-        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+0] = 0;
-        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+1] = 255;
-        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+2] = 0;
+//        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+0] = 0;
+//        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+1] = 255;
+//        frame.data[(interface->ball_y*frame.cols*3)+(interface->ball_x*3)+2] = 0;
 
-        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+0] = 0;
-        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+1] = 0;
-        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+2] = 255;
+//        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+0] = 0;
+//        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+1] = 0;
+//        frame.data[(interface->blue_y*frame.cols*3)+(interface->blue_x*3)+2] = 255;
 
-        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+0] = 255;
-        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+1] = 0;
-        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+2] = 0;
+//        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+0] = 255;
+//        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+1] = 0;
+//        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+2] = 0;
+        Draw_cross(frame,'R');
+        Draw_cross(frame,'B');
+        Draw_cross(frame,'Y');
     }else{
         ui->fps_showlabel->setText(QString("0"));
         ui->red_coordinate_showlabel->setText(QString("0"));
@@ -1103,6 +1105,48 @@ void interface_window::Draw_Front_Line(cv::Mat frame, int center_X, int center_Y
         frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+0] = 0;
         frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+1] = 255;
         frame.data[((center_Y-dis_y)*frame.cols*3)+((center_X+dis_x)*3)+2] = 255;
+    }
+}
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+void interface_window::Draw_cross(cv::Mat frame,char color){
+    switch(color){
+    case 'R':
+        for(int i=-2;i<=2;i++){
+            frame.data[((interface->ball_y+i)*frame.cols*3)+((interface->ball_x+0)*3)+0] = 0;
+            frame.data[((interface->ball_y+i)*frame.cols*3)+((interface->ball_x+0)*3)+1] = 255;
+            frame.data[((interface->ball_y+i)*frame.cols*3)+((interface->ball_x+0)*3)+2] = 0;
+        }
+        for(int j=-2;j<=2;j++){
+            frame.data[((interface->ball_y+0)*frame.cols*3)+((interface->ball_x+j)*3)+0] = 0;
+            frame.data[((interface->ball_y+0)*frame.cols*3)+((interface->ball_x+j)*3)+1] = 255;
+            frame.data[((interface->ball_y+0)*frame.cols*3)+((interface->ball_x+j)*3)+2] = 0;
+        }
+    break;
+    case 'B':
+        for(int i=-2;i<=2;i++){
+            frame.data[((interface->blue_y+i)*frame.cols*3)+((interface->blue_x+0)*3)+0] = 0;
+            frame.data[((interface->blue_y+i)*frame.cols*3)+((interface->blue_x+0)*3)+1] = 0;
+            frame.data[((interface->blue_y+i)*frame.cols*3)+((interface->blue_x+0)*3)+2] = 255;
+        }
+        for(int j=-2;j<=2;j++){
+            frame.data[((interface->blue_y+0)*frame.cols*3)+((interface->blue_x+j)*3)+0] = 0;
+            frame.data[((interface->blue_y+0)*frame.cols*3)+((interface->blue_x+j)*3)+1] = 0;
+            frame.data[((interface->blue_y+0)*frame.cols*3)+((interface->blue_x+j)*3)+2] = 255;
+        }
+    break;
+    case 'Y':
+        for(int i=-2;i<=2;i++){
+            frame.data[((interface->yellow_y+i)*frame.cols*3)+((interface->yellow_x+0)*3)+0] = 255;
+            frame.data[((interface->yellow_y+i)*frame.cols*3)+((interface->yellow_x+0)*3)+1] = 0;
+            frame.data[((interface->yellow_y+i)*frame.cols*3)+((interface->yellow_x+0)*3)+2] = 0;
+        }
+        for(int j=-2;j<=2;j++){
+            frame.data[((interface->yellow_y+0)*frame.cols*3)+((interface->yellow_x+j)*3)+0] = 255;
+            frame.data[((interface->yellow_y+0)*frame.cols*3)+((interface->yellow_x+j)*3)+1] = 0;
+            frame.data[((interface->yellow_y+0)*frame.cols*3)+((interface->yellow_x+j)*3)+2] = 0;
+        }
+    break;
     }
 }
 /////////////////////////////////////////////////////////////////////////
