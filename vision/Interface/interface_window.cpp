@@ -8,7 +8,7 @@
 #define BLUEITEM 0x04
 #define YELLOWITEM 0x08
 
-#define FILE_PATH"/tmp/HSVcolormap.bin"
+#define FILE_PATH "/tmp/HSVcolormap.bin"
 #define IMAGE_TEST1 "src/vision/1.bmp"
 using namespace std;
 using namespace cv;
@@ -95,9 +95,12 @@ void interface_window::timerEvent(QTimerEvent *)
     int front = ui->Slider_Front->value();
     if(ros::ok()){
         if(interface->cv_ptr != NULL){
-            frame = interface->cv_ptr->image;
-            //frame = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
+            Mat frame(Size(interface->cv_ptr->image.cols,interface->cv_ptr->image.rows),CV_8UC3);
+            for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = interface->cv_ptr->image.data[i];
             opposite(frame);
+            //frame = interface->cv_ptr->image;
+            //frame = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
+
             double frame_HSV[frame.rows*frame.cols*3];
             if(ui->tabModel->currentIndex()==0){
                 ui->Exposure_num->setText(QString("%1").arg(ui->Slider_Exposure->value()));
@@ -161,6 +164,7 @@ void interface_window::opposite(Mat frame){
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////////影像輸出////////////////////////////////////
 void interface_window::Showimg(Mat frame){
+
     if(ui->check_cam->isChecked()){
         QImage img(frame.cols,frame.rows,QImage::Format_RGB888);
         for(int i=0;i<frame.rows;i++){
