@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "localization")
+set(localization_MAINTAINER "iclab <iclab@todo.todo>")
+set(localization_DEPRECATED "")
+set(localization_VERSION "0.0.0")
+set(localization_BUILD_DEPENDS "roscpp" "std_msgs" "cv_bridge" "qt_build" "libqt4-dev" "message_generation")
+set(localization_RUN_DEPENDS "roscpp" "std_msgs" "qt_build" "cv_bridge" "libqt4-dev" "message_runtime")
+set(localization_BUILDTOOL_DEPENDS "catkin")
