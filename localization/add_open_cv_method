@@ -1,0 +1,9 @@
+1. package.xml需加入
+	<build_depend>cv_bridge</build_depend>
+	<run_depend>cv_bridge</run_depend>
+2. CMakeLists.txt需加入
+	find_package 及 catkin_package 需加入 cv_bridge
+3. 主程式需include
+	#include <opencv2/imgproc/imgproc.hpp>
+	#include <opencv2/highgui/highgui.hpp>
+	#include <cv_bridge/cv_bridge.h>
