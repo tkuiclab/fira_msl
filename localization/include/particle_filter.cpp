@@ -115,28 +115,36 @@ void ParticleFilter::build_LikelihoodMap()
     imwrite("/home/iclab/FIRA_ws/devel/lib/particle_filter/likelihood_img.jpg",*likelihood_map);
     //waitKey(60);
 }
+bool ParticleFilter::reset_MCL(localization_ui::Envpoint::Request &req,localization_ui::Envpoint::Response &res)
+{
+    int x = req.x;
+    int y = req.y;
+    initParticle_Filter(x,y);
+    res.resp = 1;
+    return true;
+}
 
-double ParticleFilter::randomX() // return the value between 0 ~ N-1
+double ParticleFilter::randomX(int r_x) // return the value between 0 ~ N-1
 {
     double x = rand() % (int)mapW;
-    while(x<=50 || x>=100)
+    while(x<=r_x-25 || x>=r_x+14)
     {
         x = rand() % (int)mapW;
     }
     return x;
 }
 
-double ParticleFilter::randomY() // return the value between 0 ~ N-1
+double ParticleFilter::randomY(int r_y) // return the value between 0 ~ N-1
 {
     double y = rand() % (int)mapH;
-    while(y<=250 || y>=300)
+    while(y<=r_y-25 || y>=r_y+25)
     {
         y = rand() % (int)mapH;
     }
     return y;
 }
 
-void ParticleFilter::initParticle_Filter(/*int P_Num,int L_Num*/)
+void ParticleFilter::initParticle_Filter(int r_x,int r_y)
 {
 //    pNum = P_Num;
 //    sensorLineNum = L_Num;
@@ -149,8 +157,8 @@ void ParticleFilter::initParticle_Filter(/*int P_Num,int L_Num*/)
     //gen pNum particle
     for(int i= 0;i < pNum;i++)
     {
-        tmp_p.pos(0) = randomX();
-        tmp_p.pos(1) = randomY();
+        tmp_p.pos(0) = randomX(r_x);
+        tmp_p.pos(1) = randomY(r_y);
 
         if(trust_imu)
             tmp_yaw = 0;
@@ -212,8 +220,8 @@ void ParticleFilter::moveParticle(geometry_msgs::Twist tmp)
         //re position of particle
         if(pAry[i].pos(0) <0 || pAry[i].pos(0) >=mapW || pAry[i].pos(1) <0 || pAry[i].pos(1) >=mapH)
         {
-            pAry[i].pos(0) = randomX();
-            pAry[i].pos(1) = randomY();
+            pAry[i].pos(0) = randomX(375);
+            pAry[i].pos(1) = randomY(275);
             if(trust_imu)
                 tmp_yaw = 0;
             else

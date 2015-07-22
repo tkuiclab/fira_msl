@@ -19,6 +19,7 @@
 /*****************************************************************************
 ** ROS
 *****************************************************************************/
+ParticleFilter pf;
 
 Client::Client(int argc, char** argv,const char* node_name)
 {
@@ -26,6 +27,8 @@ Client::Client(int argc, char** argv,const char* node_name)
     ros::init(argc,argv,node_name);
     ROS_INFO("Connected to roscore");
 }
+
+
 void Client::ros_comms_init() {
     n = new ros::NodeHandle();
     white_lineDist = new int[sensorlineNum];
@@ -34,6 +37,7 @@ void Client::ros_comms_init() {
     whiteline_sub = n->subscribe("/WhitlRealDis",1000,&Client::whitelineCallback,this);
     //move_sub = n->subscribe("/imu_3d",1,&Client::imuCallback,this);
     pos_pub = n->advertise<geometry_msgs::Twist>("/estimate_pos", 1000);
+    reset_MCL_service = n->advertiseService("env_point", &ParticleFilter::reset_MCL,&pf);
 
     shift_x=0;
     shift_y=0;

@@ -21,6 +21,8 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "localization_ui/Envpoint.h"
+
 
 using namespace Eigen;
 using namespace cv;
@@ -78,6 +80,7 @@ private:
 
 public:
     ParticleFilter(int p_Num,int sensor_LineNum,int map_H,int map_W);
+    ParticleFilter(){};
     ~ParticleFilter(){};
     /************************************************************/
     /************************* Read Map *************************/
@@ -89,9 +92,9 @@ public:
     /***********************************************************/
     /******************** Monte Carlo Method *******************/
     /***********************************************************/
-    double randomX();
-    double randomY();
-    void initParticle_Filter(/*int P_Num,int L_Num*/);
+    double randomX(int x);
+    double randomY(int y);
+    void initParticle_Filter(int x,int y);
     int rand_Range();
     void moveParticle(geometry_msgs::Twist tmp);
     void Sim_SensorModel(Vector3d robot);
@@ -108,6 +111,10 @@ public:
     std::vector<Vector2i> get_SensorWall();
     std::vector<Vector3d> get_Particle();
     std::vector<Vector2i> get_tpwall();
+    /************************************************************/
+    /************************** For ROS *************************/
+    /************************************************************/
+    bool reset_MCL(localization_ui::Envpoint::Request &req,localization_ui::Envpoint::Response &res);
 };
 
 #endif

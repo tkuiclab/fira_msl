@@ -1,0 +1,1387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ClientWindowDesign</class>
+ <widget class="QMainWindow" name="ClientWindowDesign">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QTutorials</string>
+  </property>
+  <property name="locale">
+   <locale language="English" country="Australia"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tab_manager">
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="locale">
+       <locale language="English" country="Australia"/>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Localization Challenge</string>
+       </attribute>
+       <widget class="QLabel" name="lbIMouse">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>750</width>
+          <height>550</height>
+         </rect>
+        </property>
+        <property name="mouseTracking">
+         <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string notr="true"/>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>../../../../../localization_Ground.jpg</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="robot_pos">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>0</y>
+          <width>99</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>robot_pos</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP1">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>110</y>
+          <width>41</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P1</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP2">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>110</y>
+          <width>41</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P2</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP3">
+        <property name="geometry">
+         <rect>
+          <x>440</x>
+          <y>110</y>
+          <width>41</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P3</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP4">
+        <property name="geometry">
+         <rect>
+          <x>640</x>
+          <y>110</y>
+          <width>41</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P4</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP7">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>180</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P7</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP16">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>360</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P16</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP6">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>200</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P6</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP8">
+        <property name="geometry">
+         <rect>
+          <x>490</x>
+          <y>200</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P8</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP18">
+        <property name="geometry">
+         <rect>
+          <x>490</x>
+          <y>360</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P18</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP17">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>380</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P17</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP12">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>280</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P12</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP5">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>180</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P5</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP9">
+        <property name="geometry">
+         <rect>
+          <x>580</x>
+          <y>180</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P9</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP20">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>460</y>
+          <width>41</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P20</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP21">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>460</y>
+          <width>41</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P21</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP22">
+        <property name="geometry">
+         <rect>
+          <x>440</x>
+          <y>460</y>
+          <width>41</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P22</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP23">
+        <property name="geometry">
+         <rect>
+          <x>640</x>
+          <y>460</y>
+          <width>41</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P23</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP14">
+        <property name="geometry">
+         <rect>
+          <x>620</x>
+          <y>280</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P14</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP10">
+        <property name="geometry">
+         <rect>
+          <x>100</x>
+          <y>280</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P10</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP11">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>280</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P11</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP19">
+        <property name="geometry">
+         <rect>
+          <x>580</x>
+          <y>380</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P19</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP15">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>380</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P15</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="LP13">
+        <property name="geometry">
+         <rect>
+          <x>530</x>
+          <y>280</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>P13</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1200</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;App</string>
+    </property>
+    <addaction name="action_Preferences"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
+   </widget>
+   <addaction name="menu_File"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dock_status">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>416</width>
+     <height>370</height>
+    </size>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Command Panel</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <widget class="QFrame" name="frame">
+     <property name="geometry">
+      <rect>
+       <x>9</x>
+       <y>9</y>
+       <width>381</width>
+       <height>251</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Ros Master</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="1" column="0" colspan="2">
+          <widget class="QLineEdit" name="line_edit_master">
+           <property name="text">
+            <string>http://127.0.0.1:11311/</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QLabel" name="label_2">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <property name="text">
+            <string>Host IP</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QLineEdit" name="line_edit_host">
+           <property name="text">
+            <string>127.0.0.1</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkbox_use_environment">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string>Use environment variables</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkbox_remember_settings">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string>Remember settings on startup</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>170</width>
+             <height>21</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="7" column="1">
+          <widget class="QPushButton" name="button_connect">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Set the target to the current joint trajectory state.</string>
+           </property>
+           <property name="statusTip">
+            <string>Clear all waypoints and set the target to the current joint trajectory state.</string>
+           </property>
+           <property name="text">
+            <string>connect</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <property name="text">
+            <string>Master URL</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QPushButton" name="quit_button">
+     <property name="geometry">
+      <rect>
+       <x>29</x>
+       <y>592</y>
+       <width>371</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Quit</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px1">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>320</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py1">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>320</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px2">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>360</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py2">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>360</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py3">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>400</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px3">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>400</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py4">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>440</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px4">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>440</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py5">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>480</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px5">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>480</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px7">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>360</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px6">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>320</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py7">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>360</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px9">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>440</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py8">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>400</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py10">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>480</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py9">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>440</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px8">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>400</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_py6">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>320</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="textEdit_px10">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>480</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_6">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>320</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P6</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_5">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>480</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P5</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_4">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>440</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P4</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_8">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>400</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P8</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_7">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>360</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P7</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_9">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>440</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P9</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_10">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>480</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P10</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>290</y>
+       <width>51</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>       X</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>290</y>
+       <width>51</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>      Y</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>290</y>
+       <width>51</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>      X</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>290</y>
+       <width>51</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>     Y</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_1">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>320</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P1</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_2">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>360</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P2</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Point_3">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>400</y>
+       <width>41</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P3</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="sendpoint">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>560</y>
+       <width>371</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Send</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No1">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>320</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No2">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>360</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No6">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>320</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No5">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>480</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No4">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>440</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No7">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>360</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>400</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No10">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>480</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No9">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>440</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="No8">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>400</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>290</y>
+       <width>31</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>No</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>290</y>
+       <width>21</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>No</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="reset_button">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>520</y>
+       <width>371</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Reset</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <action name="action_Quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="action_Preferences">
+   <property name="text">
+    <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About &amp;Qt</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>action_Quit</sender>
+   <signal>triggered()</signal>
+   <receiver>ClientWindowDesign</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>quit_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ClientWindowDesign</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>859</x>
+     <y>552</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>469</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

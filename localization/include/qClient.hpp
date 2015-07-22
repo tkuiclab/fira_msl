@@ -34,6 +34,7 @@
 #include "std_msgs/MultiArrayLayout.h"
 #include "std_msgs/MultiArrayDimension.h"
 #include "std_msgs/Int32MultiArray.h"
+#include "particle_filter.hpp"
 
 #define sensorlineNum 60
 
@@ -73,10 +74,12 @@ public:
     void whitelineCallback(const std_msgs::Int32MultiArray::ConstPtr& array);
 
     void pub_estimate_pos(geometry_msgs::Twist);
+    //bool reset_MCL(localization_ui::Envpoint::Request &req,localization_ui::Envpoint::Response &res);
 
     ros::Subscriber move_sub;
     ros::Subscriber whiteline_sub;
     ros::Publisher pos_pub;
+    ros::ServiceServer reset_MCL_service;
 
 //    int *return_laser_dist();                 //for sks project
     int *return_whiteline_dist();

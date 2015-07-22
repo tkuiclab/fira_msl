@@ -18,7 +18,7 @@ PFNode_Class::PFNode_Class(int argc, char **argv, const char *node_name):Client(
 void PFNode_Class::pf_init()
 {
     this->ros_comms_init();
-    pf.initParticle_Filter();
+    pf.initParticle_Filter(375,275);
     pf.build_LikelihoodMap();
     image.readMap();
 }
@@ -39,7 +39,7 @@ void PFNode_Class::run()
     robot_shift = robot_shift_init;
     robot_shift_tmp = robot_shift_init;
 
-    init_robot(0) = 75;
+    init_robot(0) = 375;
     init_robot(1) = 275;
     init_robot(2) = 0;
     robot = init_robot;

@@ -59,18 +59,3 @@ foreach(subdir
     )
   add_subdirectory(${subdir})
 endforeach()
-
-## Declare a cpp library
-# add_library(PF_Lib
-#   include/particle_filter.cpp
-# )
-
-## Declare a cpp executable
-# add_executable(particle_filter_node src/particle_filter_node.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-## add_dependencies(particle_filter_node particle_filter_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(particle_filter_node PF_Lib ${catkin_LIBRARIES})
