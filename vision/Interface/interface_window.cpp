@@ -2,14 +2,14 @@
 #include "math.h"
 
 #define PI 3.14159265
-
 #define REDITEM 0x01
 #define GREENITEM 0x02
 #define BLUEITEM 0x04
 #define YELLOWITEM 0x08
-
 #define FILE_PATH "/tmp/HSVcolormap.bin"
 #define IMAGE_TEST1 "src/vision/1.bmp"
+#define initx 67
+#define inity 30
 using namespace std;
 using namespace cv;
 
@@ -20,10 +20,11 @@ interface_window::interface_window(QInterface *node, QWidget *parent) :
 {
     ui->setupUi(this);
     interface->on_init();
-    startTimer(10);
+    startTimer(100);
+    interface->init_data();
 /////////////////////////////////中心點前置參數////////////////////////////
     interface->get_center();
-    if(interface->center_get_x != 0){
+    if(interface->center_get_x != 999){
         ui->Slider_X->setValue(interface->center_get_x);
         ui->Slider_Y->setValue(interface->center_get_y);
         ui->Slider_Inner->setValue(interface->center_get_inner);
@@ -95,9 +96,11 @@ void interface_window::timerEvent(QTimerEvent *)
     int front = ui->Slider_Front->value();
     if(ros::ok()){
         if(interface->cv_ptr != NULL){
-            Mat frame(Size(interface->cv_ptr->image.cols,interface->cv_ptr->image.rows),CV_8UC3);
-            for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = interface->cv_ptr->image.data[i];
-            opposite(frame);
+            //Mat frame(Size(interface->cv_ptr->image.cols,interface->cv_ptr->image.rows),CV_8UC3);
+            //for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = interface->cv_ptr->image.data[i];
+            cv::Mat frame;
+            cv::flip(interface->cv_ptr->image, frame, 1);
+            //opposite(frame);
             //frame = interface->cv_ptr->image;
             //frame = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
 
@@ -151,30 +154,28 @@ void interface_window::timerEvent(QTimerEvent *)
 }
 ///////////////////////////////鏡像矯正////////////////////////////////////
 void interface_window::opposite(Mat frame){
-    Mat Outing(Size(frame.cols,frame.rows),CV_8UC3);
-    for(int i=0;i<frame.rows;i++){
-        for(int j=0;j<frame.cols;j++){
-            Outing.data[(i*Outing.cols*3)+(j*3)+0] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+0];
-            Outing.data[(i*Outing.cols*3)+(j*3)+1] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+1];
-            Outing.data[(i*Outing.cols*3)+(j*3)+2] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+2];
-        }
-    }
-    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outing.data[i];
+//    Mat Outing(Size(frame.cols,frame.rows),CV_8UC3);
+//    for(int i=0;i<frame.rows;i++){
+//        for(int j=0;j<frame.cols;j++){
+//            Outing.data[(i*Outing.cols*3)+(j*3)+0] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+0];
+//            Outing.data[(i*Outing.cols*3)+(j*3)+1] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+1];
+//            Outing.data[(i*Outing.cols*3)+(j*3)+2] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+2];
+//        }
+//    }
+//    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outing.data[i];
+
+
+
 }
 /////////////////////////////////////////////////////////////////////////
 ///////////////////////////////影像輸出////////////////////////////////////
 void interface_window::Showimg(Mat frame){
     if(ui->check_cam->isChecked()){
-        QImage img(frame.cols,frame.rows,QImage::Format_RGB888);
-        for(int i=0;i<frame.rows;i++){
-            for(int j=0;j<frame.cols;j++){
-                unsigned char B = frame.data[(i*frame.cols*3)+(j*3)+0];
-                unsigned char G = frame.data[(i*frame.cols*3)+(j*3)+1];
-                unsigned char R = frame.data[(i*frame.cols*3)+(j*3)+2];
-                img.setPixel(j,i,QColor(R,G,B).rgb());
-            }
-        }
-        ui->Show_label->setPixmap(QPixmap::fromImage(img));
+        cv::Mat temp; // make the same cv::Mat
+        cvtColor(frame, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
+        QImage dest((const uchar *) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
+        dest.bits(); // enforce deep copy, see documentation
+        ui->Show_label->setPixmap(QPixmap::fromImage(dest));
     }else{
         ui->Show_label->clear();
     }
@@ -1122,6 +1123,8 @@ void interface_window::Draw_cross(cv::Mat frame,char color){
             frame.data[((interface->ball_y+0)*frame.cols*3)+((interface->ball_x+j)*3)+1] = 255;
             frame.data[((interface->ball_y+0)*frame.cols*3)+((interface->ball_x+j)*3)+2] = 0;
         }
+        ui->localization_ball->setGeometry(interface->ball_x,interface->ball_y-inity,300,80);
+        ui->localization_ball->setText(tr("<font color=red>R(%1 : %2)</font>").arg(interface->ball_x).arg(interface->ball_y));
     break;
     case 'B':
         for(int i=-2;i<=2;i++){
@@ -1134,6 +1137,8 @@ void interface_window::Draw_cross(cv::Mat frame,char color){
             frame.data[((interface->blue_y+0)*frame.cols*3)+((interface->blue_x+j)*3)+1] = 0;
             frame.data[((interface->blue_y+0)*frame.cols*3)+((interface->blue_x+j)*3)+2] = 255;
         }
+        ui->localization_bluedoor->setGeometry(interface->blue_x,interface->blue_y-inity,300,80);
+        ui->localization_bluedoor->setText(tr("<font color=blue>R(%1 : %2)</font>").arg(interface->blue_x).arg(interface->blue_y));
     break;
     case 'Y':
         for(int i=-2;i<=2;i++){
@@ -1146,6 +1151,8 @@ void interface_window::Draw_cross(cv::Mat frame,char color){
             frame.data[((interface->yellow_y+0)*frame.cols*3)+((interface->yellow_x+j)*3)+1] = 0;
             frame.data[((interface->yellow_y+0)*frame.cols*3)+((interface->yellow_x+j)*3)+2] = 0;
         }
+        ui->localization_yellowdoor->setGeometry(interface->yellow_x,interface->yellow_y-inity,300,80);
+        ui->localization_yellowdoor->setText(tr("<font color=yellow>R(%1 : %2)</font>").arg(interface->yellow_x).arg(interface->yellow_y));
     break;
     }
 }

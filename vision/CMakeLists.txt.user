@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.4.2, 2015-07-22T23:41:28. -->
+<!-- Written by QtCreator 3.4.2, 2015-07-23T21:10:23. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -69,10 +69,10 @@
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/iclab3/FIRA_msl/build</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
-      <value type="QString" key="CMakeProjectManager.MakeStep.AdditionalArguments"></value>
+      <value type="QString" key="CMakeProjectManager.MakeStep.AdditionalArguments">--pkg vision</value>
       <valuelist type="QVariantList" key="CMakeProjectManager.MakeStep.BuildTargets"/>
       <value type="bool" key="CMakeProjectManager.MakeStep.Clean">false</value>
-      <value type="QString" key="CMakeProjectManager.MakeStep.MakeCommand"></value>
+      <value type="QString" key="CMakeProjectManager.MakeStep.MakeCommand">catkin_make</value>
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
@@ -211,7 +211,7 @@
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
     <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
-    <value type="int" key="PE.EnvironmentAspect.Base">-1</value>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">rcs_wrapper_node</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
@@ -262,7 +262,7 @@
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
     <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
-    <value type="int" key="PE.EnvironmentAspect.Base">-1</value>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">interface</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
@@ -313,7 +313,7 @@
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
     <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
-    <value type="int" key="PE.EnvironmentAspect.Base">-1</value>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">objectdetection</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
@@ -364,7 +364,7 @@
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
     <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
-    <value type="int" key="PE.EnvironmentAspect.Base">-1</value>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">whiteLine</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
@@ -415,7 +415,7 @@
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
     <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
-    <value type="int" key="PE.EnvironmentAspect.Base">-1</value>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">blackItem</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
