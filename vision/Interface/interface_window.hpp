@@ -59,7 +59,7 @@ private Q_SLOTS:
     void dis_combox_and_list_renew();
     void on_Dis_space_valueChanged(int value);
     void on_Dis_num_valueChanged(int value);
-    void Distance_draw(cv::Mat, int, int);
+    void Distance();
     void RGBtoHSV(cv::Mat, double *);
     void RGBtoHSV_maxmin(double &, double &, double &, double &, double &);
     double RGBtoHSV_H(double, double, double, double, double);

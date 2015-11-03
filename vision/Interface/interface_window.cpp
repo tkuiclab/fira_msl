@@ -97,7 +97,7 @@ void interface_window::timerEvent(QTimerEvent *)
         if(interface->cv_ptr != NULL){
             frame = interface->cv_ptr->image;
             //frame = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
-            opposite(frame);
+            //opposite(frame);
             double frame_HSV[frame.rows*frame.cols*3];
             if(ui->tabModel->currentIndex()==0){
                 ui->Exposure_num->setText(QString("%1").arg(ui->Slider_Exposure->value()));
@@ -115,7 +115,7 @@ void interface_window::timerEvent(QTimerEvent *)
                 Scan(frame, center_x, center_y);
             }
             else if(ui->tabModel->currentIndex()==3){
-               Distance_draw(frame, center_x, center_y);
+               Distance();
             }
             else if(ui->tabModel->currentIndex()==4){
                 if(ui->tabColor->currentIndex()==0){
@@ -421,45 +421,8 @@ void interface_window::dis_combox_and_list_renew()
                                     + " cm -> " + QString::number(distance_pixel[i]));
     }
 }
- void interface_window::Distance_draw(Mat frame, int center_x, int center_y){
-     for(int i=0;i<distance_pixel[ui->Dis_num->value()-1];i++){
-         frame.data[(center_y*frame.cols*3)+((center_x+i)*3)+0] = 0;
-         frame.data[(center_y*frame.cols*3)+((center_x+i)*3)+1] = 255;
-         frame.data[(center_y*frame.cols*3)+((center_x+i)*3)+2] = 0;
-
-         frame.data[(center_y*frame.cols*3)+((center_x-i)*3)+0] = 0;
-         frame.data[(center_y*frame.cols*3)+((center_x-i)*3)+1] = 255;
-         frame.data[(center_y*frame.cols*3)+((center_x-i)*3)+2] = 0;
-
-         frame.data[((center_y+i)*frame.cols*3)+(center_x*3)+0] = 0;
-         frame.data[((center_y+i)*frame.cols*3)+(center_x*3)+1] = 255;
-         frame.data[((center_y+i)*frame.cols*3)+(center_x*3)+2] = 0;
-
-         frame.data[((center_y-i)*frame.cols*3)+(center_x*3)+0] = 0;
-         frame.data[((center_y-i)*frame.cols*3)+(center_x*3)+1] = 255;
-         frame.data[((center_y-i)*frame.cols*3)+(center_x*3)+2] = 0;
-     }
-     for(int i=1;i<ui->Dis_num->value();i++){
-         for(int j=-5;j<=5;j++){
-             frame.data[((center_y+j)*frame.cols*3)+((center_x+distance_pixel[i])*3)+0] = 0;
-             frame.data[((center_y+j)*frame.cols*3)+((center_x+distance_pixel[i])*3)+1] = 255;
-             frame.data[((center_y+j)*frame.cols*3)+((center_x+distance_pixel[i])*3)+2] = 0;
-
-             frame.data[((center_y+j)*frame.cols*3)+((center_x-distance_pixel[i])*3)+0] = 0;
-             frame.data[((center_y+j)*frame.cols*3)+((center_x-distance_pixel[i])*3)+1] = 255;
-             frame.data[((center_y+j)*frame.cols*3)+((center_x-distance_pixel[i])*3)+2] = 0;
-
-             frame.data[((center_y+distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+0] = 0;
-             frame.data[((center_y+distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+1] = 255;
-             frame.data[((center_y+distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+2] = 0;
-
-             frame.data[((center_y-distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+0] = 0;
-             frame.data[((center_y-distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+1] = 255;
-             frame.data[((center_y-distance_pixel[i])*frame.cols*3)+((center_x+j)*3)+2] = 0;
-         }
-     }
+void interface_window::Distance(){
      if(ui->dis_para->isDown() ==true){
-
          for(int i=0;i<ui->Dis_num->value();i++){
              dis_space.push_back(distance_space[i]);
              dis_pixel.push_back(distance_pixel[i]);

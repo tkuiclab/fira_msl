@@ -120,7 +120,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 //        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
 
     //cv::imshow("Image", cv_ptr->image);
-    cv::waitKey(10);
+//    cv::waitKey(10);
     ///////////////////////////////////////////////
     /////////////////////FPS///////////////////////
     int EndTime = ros::Time::now().toNSec();
