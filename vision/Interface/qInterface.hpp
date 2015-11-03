@@ -63,6 +63,15 @@ public:
     void imageCb(const sensor_msgs::ImageConstPtr& msg);
     void object_data(const vision::Object& msg);
     cv_bridge::CvImagePtr cv_ptr;
+    //-------------------init_data----------------------
+    void init_data(){
+        ball_LR = "NULL";blue_LR = "NULL";yellow_LR = "NULL";
+        image_fps = 999;
+        ball_x = 999; ball_y = 999; ball_ang = 999; ball_dis = 999;
+        blue_x = 999; blue_y = 999; blue_ang = 999; blue_dis = 999;
+        yellow_x = 999; yellow_y = 999; yellow_ang = 999; yellow_dis = 999;
+    }
+    //--------------------------------------------------
     //-------------------camera-------------------------
     void set_campara(int value_ex, int value_r, int value_b){
         dynamic_reconfigure::ReconfigureRequest srv_req;
@@ -96,7 +105,8 @@ public:
     }
     int center_get_x, center_get_y, center_get_inner, center_get_outer, center_get_front;
     void get_center(){
-        center_get_x = 0;
+        center_get_x = 999;center_get_y = 999;
+        center_get_inner = 999;center_get_outer = 999;center_get_front = 999;
         nh->getParam("/FIRA/Center/X",center_get_x);
         nh->getParam("/FIRA/Center/Y",center_get_y);
         nh->getParam("/FIRA/Center/Inner",center_get_inner);
@@ -113,6 +123,7 @@ public:
     }
     std::vector<int>scan_get_para;
     void get_scan(){
+        scan_get_para.clear();
         nh->getParam("/FIRA/Scan/Parameter",scan_get_para);
     }
     //--------------------------------------------------
@@ -132,6 +143,8 @@ public:
     }
     std::vector<int>Redmap,Greenmap,Bluemap,Yellowmap;
     void get_hsv(){
+        Redmap.clear();Greenmap.clear();
+        Bluemap.clear();Yellowmap.clear();
         nh->getParam("/FIRA/HSV/Redrange",Redmap);
         nh->getParam("/FIRA/HSV/Greenrange",Greenmap);
         nh->getParam("/FIRA/HSV/Bluerange",Bluemap);

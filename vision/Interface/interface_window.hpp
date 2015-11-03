@@ -27,7 +27,7 @@ public:
     explicit interface_window(QInterface *node, QWidget *parent = 0);
     ~interface_window();
 
-    cv::Mat frame;
+    //cv::Mat frame;
     int mosue_x,mosue_y;
     int distance_space[100];
     int distance_pixel[100];
@@ -75,6 +75,7 @@ private Q_SLOTS:
     void Black_Line(cv::Mat , int, int, int ,int , int );
     void Draw_Front_Line(cv::Mat , int , int ,int );
     void Data_check(cv::Mat ,int ,int);
+    void Draw_cross(cv::Mat frame,char color);
 
 Q_SIGNALS:
     void Mouse_pressed();

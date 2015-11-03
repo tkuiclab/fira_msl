@@ -44,8 +44,8 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-    //cv_ptr->image = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
-    opposite(cv_ptr->image);
+    cv_ptr->image = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
+    //opposite(cv_ptr->image);
     Mat Redmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
     Mat Greenmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
     Mat Bluemap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
@@ -119,12 +119,17 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 //    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
 //        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
 
-    //cv::imshow("Image", cv_ptr->image);
+//    cv::imshow("Image", cv_ptr->image);
+//    cv::imshow("R", Redmap);
+//    cv::imshow("G", Greenmap);
+//    cv::imshow("B", Bluemap);
+//    cv::imshow("Y", Yellowmap);
 //    cv::waitKey(10);
     ///////////////////////////////////////////////
     /////////////////////FPS///////////////////////
     int EndTime = ros::Time::now().toNSec();
     double fps = 1000000000/(EndTime - StartTime);
+    cout<<"FPS_avg : "<<fps<<endl;
     if(core_num<100){
         fps_num[core_num] = fps;
         //cout<<core_num<<endl;
