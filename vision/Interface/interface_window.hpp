@@ -47,7 +47,6 @@ protected:
     void timerEvent(QTimerEvent *);
 
 private Q_SLOTS:
-    void opposite(cv::Mat);
     void Showimg(cv::Mat);
     void on_Slider_Exposure_valueChanged(int value);
     void on_Slider_White_R_valueChanged(int value);

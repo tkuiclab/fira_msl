@@ -95,14 +95,11 @@ void interface_window::timerEvent(QTimerEvent *)
     int inner = ui->Slider_Inner->value(); int outer = ui->Slider_Outer->value();
     int front = ui->Slider_Front->value();
     if(ros::ok()){
-        if(interface->cv_ptr == NULL){
-                 //Mat frame(Size(interface->cv_ptr->image.cols,interface->cv_ptr->image.rows),CV_8UC3);
-                 //for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = interface->cv_ptr->image.data[i];
+        if(interface->cv_ptr != NULL){
+
             cv::Mat frame;
-            //cv::flip(interface->cv_ptr->image, frame, 1);
-                 //opposite(frame);
-            //frame = interface->cv_ptr->image;
-            frame = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
+            cv::flip(interface->cv_ptr->image, frame, 1);
+
             double frame_HSV[frame.rows*frame.cols*3];
             if(ui->tabModel->currentIndex()==0){
                 ui->Exposure_num->setText(QString("%1").arg(ui->Slider_Exposure->value()));
@@ -151,22 +148,6 @@ void interface_window::timerEvent(QTimerEvent *)
         }
     }
 }
-///////////////////////////////鏡像矯正////////////////////////////////////
-void interface_window::opposite(Mat frame){
-//    Mat Outing(Size(frame.cols,frame.rows),CV_8UC3);
-//    for(int i=0;i<frame.rows;i++){
-//        for(int j=0;j<frame.cols;j++){
-//            Outing.data[(i*Outing.cols*3)+(j*3)+0] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+0];
-//            Outing.data[(i*Outing.cols*3)+(j*3)+1] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+1];
-//            Outing.data[(i*Outing.cols*3)+(j*3)+2] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+2];
-//        }
-//    }
-//    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outing.data[i];
-
-
-
-}
-/////////////////////////////////////////////////////////////////////////
 ///////////////////////////////影像輸出////////////////////////////////////
 void interface_window::Showimg(Mat frame){
     if(ui->check_cam->isChecked()){

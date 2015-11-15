@@ -44,13 +44,13 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-    cv_ptr->image = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
-    //opposite(cv_ptr->image);
-    Mat Redmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
-    Mat Greenmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
-    Mat Bluemap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
-    Mat Yellowmap(Size(cv_ptr->image.cols,cv_ptr->image.rows),CV_8UC3);
-    HSVmap(cv_ptr->image,Redmap,Greenmap,Bluemap,Yellowmap);
+    Mat frame;
+    cv::flip(cv_ptr->image, frame, 1);
+    Mat Redmap(Size(frame.cols,frame.rows),CV_8UC3);
+    Mat Greenmap(Size(frame.cols,frame.rows),CV_8UC3);
+    Mat Bluemap(Size(frame.cols,frame.rows),CV_8UC3);
+    Mat Yellowmap(Size(frame.cols,frame.rows),CV_8UC3);
+    HSVmap(frame,Redmap,Greenmap,Bluemap,Yellowmap);
     int Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min;
     int Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min;
     int Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min;
@@ -111,15 +111,15 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     }
     /////////////////////Show view/////////////////
 //    if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0))
-//        draw(cv_ptr->image,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
+//        draw(frame,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
 //    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0))
-//        draw(cv_ptr->image,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
+//        draw(frame,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
 //    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0))
-//        draw(cv_ptr->image,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
+//        draw(frame,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
 //    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
-//        draw(cv_ptr->image,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
+//        draw(frame,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
 
-//    cv::imshow("Image", cv_ptr->image);
+//    cv::imshow("Image", frame);
 //    cv::imshow("R", Redmap);
 //    cv::imshow("G", Greenmap);
 //    cv::imshow("B", Bluemap);
@@ -147,17 +147,6 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     ///////////////////////////////////////////////
     object_pub.publish(object_msg);
     ros::spinOnce();
-}
-void ImageConverter::opposite(Mat frame){
-    Mat Outing(Size(frame.cols,frame.rows),CV_8UC3);
-    for(int i=0;i<frame.rows;i++){
-        for(int j=0;j<frame.cols;j++){
-            Outing.data[(i*Outing.cols*3)+(j*3)+0] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+0];
-            Outing.data[(i*Outing.cols*3)+(j*3)+1] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+1];
-            Outing.data[(i*Outing.cols*3)+(j*3)+2] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+2];
-        }
-    }
-    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outing.data[i];
 }
 vector<BYTE> ImageConverter::ColorFile()
 {
