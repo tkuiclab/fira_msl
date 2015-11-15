@@ -1,8 +1,6 @@
 #include "image_converter.hpp"
 #include "math.h"
 
-#define IMAGE_TEST1 "src/vision/1.bmp"
-
 using namespace std;
 using namespace cv;
 
@@ -23,6 +21,7 @@ ImageConverter::~ImageConverter()
 
 void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 {
+    int StartTime = ros::Time::now().toNSec();
     cv_bridge::CvImagePtr cv_ptr;
     try
     {
@@ -33,8 +32,10 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
       ROS_ERROR("cv_bridge exception: %s", e.what());
       return;
     }
-    //cv_ptr->image = imread( IMAGE_TEST1 , CV_LOAD_IMAGE_COLOR );
-    opposite(cv_ptr->image);
+
+    Mat frame;
+    cv::flip(cv_ptr->image, frame, 1);
+
     double gray_num[256] = {0};
     int avg_new=0;
     int gray_sum = 0;
@@ -42,38 +43,38 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     int gray_low = 0;
     int gray_hight = 0;
     int avg_old = 0;
-    for(int i=0;i<cv_ptr->image.rows;i++){
-        for(int j=0;j<cv_ptr->image.cols;j++){
-            unsigned char gray =(cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+0]+
-                                cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+1]+
-                                cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+2])/3;
-            cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+0] = gray;
-            cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+1] = gray;
-            cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+2] = gray;
+    for(int i=0;i<frame.rows;i++){
+        for(int j=0;j<frame.cols;j++){
+            unsigned char gray =(frame.data[(i*frame.cols*3)+(j*3)+0]+
+                                frame.data[(i*frame.cols*3)+(j*3)+1]+
+                                frame.data[(i*frame.cols*3)+(j*3)+2])/3;
+            frame.data[(i*frame.cols*3)+(j*3)+0] = gray;
+            frame.data[(i*frame.cols*3)+(j*3)+1] = gray;
+            frame.data[(i*frame.cols*3)+(j*3)+2] = gray;
             gray_num[gray]++;
         }
     }
     for(int i=0;i<256;i++)gray_sum = gray_sum+(gray_num[i]*i);
-    gray_avg = gray_sum/(cv_ptr->image.rows*cv_ptr->image.cols);
+    gray_avg = gray_sum/(frame.rows*frame.cols);
     avg_new = gray_avg;
     while((avg_old!=avg_new)&&(avg_old!=avg_new-1)){
         avg_old = avg_new;
         for(int i=0;i<avg_old;i++)gray_low = gray_low+(gray_num[i]*i);
-        gray_low = gray_low/(cv_ptr->image.rows*cv_ptr->image.cols);
+        gray_low = gray_low/(frame.rows*frame.cols);
         for(int i=avg_old;i<256;i++)gray_hight = gray_hight+(gray_num[i]*i);
-        gray_hight = gray_hight/(cv_ptr->image.rows*cv_ptr->image.cols);
+        gray_hight = gray_hight/(frame.rows*frame.cols);
         avg_new = (gray_low+gray_hight)/2;
     }
-    for(int i=0;i<cv_ptr->image.rows;i++){
-        for(int j=0;j<cv_ptr->image.cols;j++){
-            if(cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+0]<avg_new){
-                cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+0] = 0;
-                cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+1] = 0;
-                cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+2] = 0;
+    for(int i=0;i<frame.rows;i++){
+        for(int j=0;j<frame.cols;j++){
+            if(frame.data[(i*frame.cols*3)+(j*3)+0]<avg_new){
+                frame.data[(i*frame.cols*3)+(j*3)+0] = 0;
+                frame.data[(i*frame.cols*3)+(j*3)+1] = 0;
+                frame.data[(i*frame.cols*3)+(j*3)+2] = 0;
             }else{
-                cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+0] = 255;
-                cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+1] = 255;
-                cv_ptr->image.data[(i*cv_ptr->image.cols*3)+(j*3)+2] = 255;
+                frame.data[(i*frame.cols*3)+(j*3)+0] = 255;
+                frame.data[(i*frame.cols*3)+(j*3)+1] = 255;
+                frame.data[(i*frame.cols*3)+(j*3)+2] = 255;
             }
         }
     }
@@ -88,15 +89,15 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
         for(int r=center_inner;r<=center_outer;r++){
             int dis_x = x*r;
             int dis_y = y*r;
-            if( cv_ptr->image.data[((center_y-dis_y)*cv_ptr->image.cols*3)+((center_x+dis_x)*3)+0] == 0
-              &&cv_ptr->image.data[((center_y-dis_y)*cv_ptr->image.cols*3)+((center_x+dis_x)*3)+1] == 0
-              &&cv_ptr->image.data[((center_y-dis_y)*cv_ptr->image.cols*3)+((center_x+dis_x)*3)+2] == 0){
+            if( frame.data[((center_y-dis_y)*frame.cols*3)+((center_x+dis_x)*3)+0] == 0
+              &&frame.data[((center_y-dis_y)*frame.cols*3)+((center_x+dis_x)*3)+1] == 0
+              &&frame.data[((center_y-dis_y)*frame.cols*3)+((center_x+dis_x)*3)+2] == 0){
                 blackItem_pixel.push_back(hypot(dis_x,dis_y));
 		break;
             }else{
-//                cv_ptr->image.data[((center_y-dis_y)*cv_ptr->image.cols*3)+((center_x+dis_x)*3)+0] = 0;
-//                cv_ptr->image.data[((center_y-dis_y)*cv_ptr->image.cols*3)+((center_x+dis_x)*3)+1] = 0;
-//                cv_ptr->image.data[((center_y-dis_y)*cv_ptr->image.cols*3)+((center_x+dis_x)*3)+2] = 255;
+//                frame.data[((center_y-dis_y)*frame.cols*3)+((center_x+dis_x)*3)+0] = 0;
+//                frame.data[((center_y-dis_y)*frame.cols*3)+((center_x+dis_x)*3)+1] = 0;
+//                frame.data[((center_y-dis_y)*frame.cols*3)+((center_x+dis_x)*3)+2] = 255;
                 if(r==center_outer){
                     blackItem_pixel.push_back(999);
                 }
@@ -142,20 +143,15 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
         black_pub.publish(BlackRealDis);
         ros::spinOnce();
     /////////////////////Show view/////////////////
-//    cv::imshow("Image", cv_ptr->image);
+//    cv::imshow("Image", frame);
 //    cv::waitKey(10);
     ///////////////////////////////////////////////
-}
-void ImageConverter::opposite(Mat frame){
-    Mat Outing(Size(frame.cols,frame.rows),CV_8UC3);
-    for(int i=0;i<frame.rows;i++){
-        for(int j=0;j<frame.cols;j++){
-            Outing.data[(i*Outing.cols*3)+(j*3)+0] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+0];
-            Outing.data[(i*Outing.cols*3)+(j*3)+1] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+1];
-            Outing.data[(i*Outing.cols*3)+(j*3)+2] = frame.data[(i*frame.cols*3)+((frame.cols-j-1)*3)+2];
-        }
-    }
-    for(int i=0;i<frame.rows*frame.cols*3;i++)frame.data[i] = Outing.data[i];
+    /////////////////////FPS///////////////////////
+    int EndTime = ros::Time::now().toNSec();
+    double fps = 1000000000/(EndTime - StartTime);
+    //cout<<"FPS_avg : "<<fps<<endl;
+
+    ///////////////////////////////////////////////
 }
 void ImageConverter::get_center(){
     nh.getParam("/FIRA/Center/X",center_x);

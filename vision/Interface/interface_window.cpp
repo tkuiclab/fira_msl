@@ -894,6 +894,8 @@ void interface_window::White_Line(cv::Mat frame, int front,int center_X, int cen
         interface->sent_whiteline(ui->Slider_Gray->value(),ui->Slider_Angle->value());
         ui->White_sent->setDown(0);
     }
+    ui->Gray_num->setText(QString("%1").arg(ui->Slider_Gray->value()));
+    ui->Angle_num->setText(QString("%1").arg(ui->Slider_Angle->value()));
 }
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////BlackItem///////////////////////////////

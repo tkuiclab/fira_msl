@@ -7,7 +7,6 @@
 #define BLUEITEM 0x04
 #define YELLOWITEM 0x08
 #define FILE_PATH "/tmp/HSVcolormap.bin"
-#define IMAGE_TEST1 "src/vision/1.bmp"
 
 using namespace std;
 using namespace cv;
@@ -129,7 +128,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     /////////////////////FPS///////////////////////
     int EndTime = ros::Time::now().toNSec();
     double fps = 1000000000/(EndTime - StartTime);
-    cout<<"FPS_avg : "<<fps<<endl;
+    //cout<<"FPS_avg : "<<fps<<endl;
     if(core_num<100){
         fps_num[core_num] = fps;
         //cout<<core_num<<endl;
