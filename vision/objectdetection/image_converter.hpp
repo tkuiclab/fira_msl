@@ -35,10 +35,18 @@ private:
     int Red_dis,Blue_dis,Yellow_dis;
 
     int num;
-
+	
+	int StartTime,EndTime;
+	double fps;
     int core_num;
     int fps_num[100];
     int fps_avg;
+
+    int Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min;
+    int Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min;
+    int Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min;
+    int Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min;
+    int Red_center[2], Blue_center[2], Yellow_center[2];
 
 public:
     ImageConverter();

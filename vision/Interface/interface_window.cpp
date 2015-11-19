@@ -1004,8 +1004,12 @@ void interface_window::Data_check(Mat frame,int center_x,int center_y){
 //        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+0] = 255;
 //        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+1] = 0;
 //        frame.data[(interface->yellow_y*frame.cols*3)+(interface->yellow_x*3)+2] = 0;
+
+        if(interface->ball_x!=0)
         Draw_cross(frame,'R');
+        if(interface->blue_x!=0)
         Draw_cross(frame,'B');
+        if(interface->yellow_x!=0)
         Draw_cross(frame,'Y');
     }else{
         ui->fps_showlabel->setText(QString("0"));

@@ -123,7 +123,7 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     /////////////////////FPS///////////////////////
     int EndTime = ros::Time::now().toNSec();
     double fps = 1000000000/(EndTime - StartTime);
-    //cout<<"FPS_avg : "<<fps<<endl;
+    cout<<"FPS_avg : "<<fps<<endl;
 
     ///////////////////////////////////////////////
 }

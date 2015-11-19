@@ -32,7 +32,7 @@ ImageConverter::~ImageConverter()
 
 void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
 {
-    int StartTime = ros::Time::now().toNSec();
+    StartTime = ros::Time::now().toNSec();
     cv_bridge::CvImagePtr cv_ptr;
     try
     {
@@ -50,11 +50,11 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     Mat Bluemap(Size(frame.cols,frame.rows),CV_8UC3);
     Mat Yellowmap(Size(frame.cols,frame.rows),CV_8UC3);
     HSVmap(frame,Redmap,Greenmap,Bluemap,Yellowmap);
-    int Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min;
+    /*int Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min;
     int Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min;
     int Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min;
     int Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min;
-    int Red_center[2], Blue_center[2], Yellow_center[2];
+    int Red_center[2], Blue_center[2], Yellow_center[2];*/
 
     objectdet(Redmap,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
     objectdet(Bluemap,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
@@ -69,17 +69,17 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     Yellow_center[1] = (Yellowmap_y_max+Yellowmap_y_min)/2;
 
     vision::Object object_msg;
-    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0)){
+    /*if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0)){
         if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0)){
             if( (Red_center[0]>Greenmap_x_min) && (Red_center[0]<Greenmap_x_max)
-              &&(Red_center[1]>Greenmap_y_min) && (Red_center[1]<Greenmap_y_max) ){
+              &&(Red_center[1]>Greenmap_y_min) && (Red_center[1]<Greenmap_y_max) ){*/
                 objectdet_distance(Red_center[0], Red_center[1], Red_LR, Red_angle, Red_dis);
                 object_msg.ball_x = Red_center[1];
                 object_msg.ball_y = Red_center[0];
                 object_msg.ball_LR = Red_LR;
                 object_msg.ball_ang = Red_angle;
                 object_msg.ball_dis = Red_dis;
-            }else{
+            /*}else{
                 ROS_ERROR("Can't find ball!!!");
             }
         }else{
@@ -88,64 +88,65 @@ void ImageConverter::imageCb(const sensor_msgs::ImageConstPtr& msg)
     }else{
         ROS_ERROR("Can't find space!!!");
     }
-    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0)){
+    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0)){*/
         objectdet_distance(Blue_center[0], Blue_center[1], Blue_LR, Blue_angle, Blue_dis);
         object_msg.blue_x = Blue_center[1];
         object_msg.blue_y = Blue_center[0];
         object_msg.blue_LR = Blue_LR;
         object_msg.blue_ang = Blue_angle;
         object_msg.blue_dis = Blue_dis;
-    }else{
+    /*}else{
         ROS_ERROR("Can't find bluedoor!!!");
     }
-    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0)){
+    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0)){*/
         objectdet_distance(Yellow_center[0], Yellow_center[1], Yellow_LR, Yellow_angle, Yellow_dis);
         object_msg.yellow_x = Yellow_center[1];
         object_msg.yellow_y = Yellow_center[0];
         object_msg.yellow_LR = Yellow_LR;
         object_msg.yellow_ang = Yellow_angle;
         object_msg.yellow_dis = Yellow_dis;
-    }else{
+    /*}else{
         ROS_ERROR("Can't find yellowdoor!!!");
-    }
+    }*/
     /////////////////////Show view/////////////////
-//    if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0))
-//        draw(frame,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
-//    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0))
-//        draw(frame,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
-//    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0))
-//        draw(frame,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
-//    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
-//        draw(frame,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
+    /*if((Redmap_x_max!=0) && (Redmap_x_min!=0) && (Redmap_y_max!=0) && (Redmap_y_min!=0))
+        draw(frame,Redmap_x_max,Redmap_x_min,Redmap_y_max,Redmap_y_min);
+    if((Greenmap_x_max!=0) && (Greenmap_x_min!=0) && (Greenmap_y_max!=0) && (Greenmap_y_min!=0))
+        draw(frame,Greenmap_x_max,Greenmap_x_min,Greenmap_y_max,Greenmap_y_min);
+    if((Bluemap_x_max!=0) && (Bluemap_x_min!=0) && (Bluemap_y_max!=0) && (Bluemap_y_min!=0))
+        draw(frame,Bluemap_x_max,Bluemap_x_min,Bluemap_y_max,Bluemap_y_min);
+    if((Yellowmap_x_max!=0) && (Yellowmap_x_min!=0) && (Yellowmap_y_max!=0) && (Yellowmap_y_min!=0))
+        draw(frame,Yellowmap_x_max,Yellowmap_x_min,Yellowmap_y_max,Yellowmap_y_min);
 
-//    cv::imshow("Image", frame);
-//    cv::imshow("R", Redmap);
-//    cv::imshow("G", Greenmap);
-//    cv::imshow("B", Bluemap);
-//    cv::imshow("Y", Yellowmap);
-//    cv::waitKey(10);
+    cv::imshow("Image", frame);
+    cv::imshow("R", Redmap);
+    cv::imshow("G", Greenmap);
+    cv::imshow("B", Bluemap);
+    cv::imshow("Y", Yellowmap);
+    cv::waitKey(10);*/
     ///////////////////////////////////////////////
     /////////////////////FPS///////////////////////
-    int EndTime = ros::Time::now().toNSec();
-    double fps = 1000000000/(EndTime - StartTime);
+    EndTime = ros::Time::now().toNSec();
+    fps = 1000000000/(EndTime - StartTime);
+    object_msg.fps = fps;
     //cout<<"FPS_avg : "<<fps<<endl;
-    if(core_num<100){
-        fps_num[core_num] = fps;
-        //cout<<core_num<<endl;
-        core_num++;
-    }
-    if(core_num==100){
-        fps_avg = 0;
-        for(int i=0;i<100;i++){
-            fps_avg += fps_num[i];
-        }
-        fps_avg = fps_avg/100;
-        //cout<<"FPS_avg : "<<fps_avg<<endl;
-        object_msg.fps = fps_avg;
-    }
+//    if(core_num<=100){
+//        fps_num[core_num] = fps;
+//        //cout<<core_num<<endl;
+//        core_num++;
+//    }else
+//    if(core_num>=100){
+//        fps_avg = 0;
+//        for(int i=0;i<100;i++){
+//            fps_avg += fps_num[i];
+//        }
+//        fps_avg = fps_avg/100;
+//        cout<<"FPS_avg : "<<fps_avg<<endl;
+//        object_msg.fps = fps_avg;
+//    }
     ///////////////////////////////////////////////
     object_pub.publish(object_msg);
-    ros::spinOnce();
+//    ros::spinOnce();
 }
 vector<BYTE> ImageConverter::ColorFile()
 {
